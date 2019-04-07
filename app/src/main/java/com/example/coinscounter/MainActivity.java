@@ -10,8 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final String TAG = "MainActivity";
     String currentPhotoPath;
     ImageView imgView;
 
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public void openCamera(View view) {
         dispatchTakePictureIntent();
         Bitmap myBitmap = BitmapFactory.decodeFile(currentPhotoPath);
-        imgView.setImageBitmap(myBitmap);
+//        imgView.setImageBitmap(myBitmap);
 //        imgView.setAlpha(1);
     }
 
@@ -78,13 +81,14 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imgView.setImageBitmap(imageBitmap);
-//            imgView.setAlpha(1f);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bitmap takenImage = BitmapFactory.decodeFile(currentPhotoPath);
+            imgView.setImageBitmap(takenImage);
+
+        }else{
+            Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
