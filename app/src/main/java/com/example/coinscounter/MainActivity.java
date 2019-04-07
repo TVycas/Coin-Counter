@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap takenImage = BitmapFactory.decodeFile(currentPhotoPath);
-            imgView.setImageBitmap(takenImage);
-
+            EdgeFinder edgeFinder = new EdgeFinder(takenImage);
+            imgView.setImageBitmap(edgeFinder.turnMonochrome());
         }else{
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
