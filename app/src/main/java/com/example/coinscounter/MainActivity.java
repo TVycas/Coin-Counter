@@ -3,7 +3,11 @@ package com.example.coinscounter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -88,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap takenImage = BitmapFactory.decodeFile(currentPhotoPath);
-            new ImageProcessing(this).execute(takenImage);
+            new ImageProcessing(this, 700).execute(takenImage);
         }else{
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
@@ -96,9 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         private WeakReference<MainActivity> activityWeakReference;
+        private final int imageWidth;
 
-        ImageProcessing(MainActivity activity) {
+        ImageProcessing(MainActivity activity, int imageWidth) {
             activityWeakReference = new WeakReference<MainActivity>(activity);
+            this.imageWidth = imageWidth;
         }
 
         @Override
@@ -116,9 +122,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Bitmap doInBackground(Bitmap... bitmaps) {
             publishProgress("Starting to compress...");
-            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], 700,700,false);
+
+            int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
+            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth,true);
+
             publishProgress("Turning monochrome...");
-            bitmaps[0] = turnMonochrome(bitmaps[0]);
+            bitmaps[0] = RGBtoGrayscale(bitmaps[0]);
+
             return bitmaps[0];
         }
 
@@ -150,36 +160,25 @@ public class MainActivity extends AppCompatActivity {
             activity.text.setVisibility(View.INVISIBLE);
         }
 
-        public Bitmap turnMonochrome(Bitmap img) {
-            Log.d(TAG, "Turning image to monochrome");
-            int width = img.getWidth();
-            int height = img.getHeight();
-            // create output bitmap
-            Bitmap bmOut = Bitmap.createBitmap(width, height, img.getConfig());
-            // color information
-            int A, R, G, B;
-            int pixel;
-            for (int x = 0; x < width; ++x) {
-                for (int y = 0; y < height; ++y) {
-                    // get pixel color
-                    pixel = img.getPixel(x, y);
-                    A = Color.alpha(pixel);
-                    R = Color.red(pixel);
-                    G = Color.green(pixel);
-                    B = Color.blue(pixel);
-                    int gray = (int) (0.2989 * R + 0.5870 * G + 0.1140 * B);
-                    // use 128 as threshold, above -> white, below -> black
-                    if (gray > 128) {
-                        gray = 255;
-                    } else {
-                        gray = 0;
-                    }
-                    // set new pixel color to output bitmap
-                    bmOut.setPixel(x, y, Color.argb(A, gray, gray, gray));
-                }
-            }
+        private Bitmap RGBtoGrayscale(Bitmap img){
+            float[] matrix = new float[]{
+                    0.3f, 0.59f, 0.11f, 0, 0,
+                    0.3f, 0.59f, 0.11f, 0, 0,
+                    0.3f, 0.59f, 0.11f, 0, 0,
+                    0, 0, 0, 1, 0,};
 
-            return bmOut;
+            Bitmap dest = Bitmap.createBitmap(
+                    img.getWidth(),
+                    img.getHeight(),
+                    img.getConfig());
+
+            Canvas canvas = new Canvas(dest);
+            Paint paint = new Paint();
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+            paint.setColorFilter(filter);
+            canvas.drawBitmap(img, 0, 0, paint);
+
+            return dest;
         }
     }
 }
