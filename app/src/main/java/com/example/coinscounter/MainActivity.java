@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         imgView.setVisibility(View.INVISIBLE);
 
         if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntent();
+            loadImage();
 
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    dispatchTakePictureIntent();
+                    loadImage();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadImage(){
-        
+        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        new ImageProcessing(this, 700).execute(bm);
     }
 
     private void dispatchTakePictureIntent() {

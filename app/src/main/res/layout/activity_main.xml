@@ -17,7 +17,8 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <Button
         android:id="@+id/photoButton"
@@ -25,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="124dp"
         android:layout_marginBottom="52dp"
-        android:onClick="loadImage"
+        android:onClick="openCamera"
         android:text="Take picture"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="252dp"
         android:layout_marginBottom="52dp"
-        android:onClick="openCamera"
+        android:onClick="loadImage"
         android:text="Load image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
