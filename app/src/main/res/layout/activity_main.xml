@@ -20,13 +20,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/photoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="124dp"
         android:layout_marginBottom="52dp"
-        android:onClick="openCamera"
+        android:onClick="loadImage"
         android:text="Take picture"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="252dp"
+        android:layout_marginBottom="52dp"
+        android:onClick="openCamera"
+        android:text="Load image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -34,12 +45,12 @@
         android:id="@+id/textView"
         android:layout_width="199dp"
         android:layout_height="34dp"
-        android:layout_marginStart="88dp"
+        android:layout_marginStart="84dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="80dp"
         android:text="TextView"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/photoButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="1.0" />

@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,11 +44,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.support.v7.app.AlertDialog.*;
+import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
+import static org.opencv.imgproc.Imgproc.GaussianBlur;
+import static org.opencv.imgproc.Imgproc.HoughCircles;
 
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int PERMISSION_TO_USE_STORAGE = 2;
+    static final int PERMISSION_TO_WRITE_STORAGE = 2;
+    static final int PERMISSION_TO_READ_STORAGE = 3;
     private static final String TAG = "MainActivity";
     String currentPhotoPath;
     ImageView imgView;
@@ -73,14 +86,32 @@ public class MainActivity extends AppCompatActivity {
             }
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_TO_USE_STORAGE);
+                    PERMISSION_TO_WRITE_STORAGE);
         }
+    }
+
+    public void loadImage(View view) {
+        imgView.setVisibility(View.INVISIBLE);
+
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            dispatchTakePictureIntent();
+
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
+
+            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PERMISSION_TO_READ_STORAGE);
+        }
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_TO_USE_STORAGE: {
+            case PERMISSION_TO_WRITE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 Log.d(TAG, "grantResults.length = " + grantResults.length + "\n grantResults[0] = " + grantResults[0] + " " + PackageManager.PERMISSION_GRANTED);
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -90,7 +121,21 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(this, "Camera permission not granted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            case PERMISSION_TO_READ_STORAGE: {
+                Log.d(TAG, "grantResults.length = " + grantResults.length + "\n grantResults[0] = " + grantResults[0] + " " + PackageManager.PERMISSION_GRANTED);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    dispatchTakePictureIntent();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
@@ -98,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request.
         }
+    }
+
+    private void loadImage(){
+        
     }
 
     private void dispatchTakePictureIntent() {
@@ -148,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private static class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         private static final String TAG = "ImageProcessing";
         private WeakReference<MainActivity> activityWeakReference;
@@ -181,25 +232,50 @@ public class MainActivity extends AppCompatActivity {
             publishProgress("Turning grayscale...");
             bitmaps[0] = RGBtoGrayscale(bitmaps[0]);
 
-            publishProgress("Starting convolution...");
-            int[][] LoGKernel = {
-                    {0, 0, 1, 0, 0},
-                    {0, 1, 2, 1, 0},
-                    {1, 2, -16, 2, 1},
-                    {0, 1, 2, 1, 0},
-                    {0, 0, 1, 0, 0}
-            };
-            convoluteImg(bitmaps[0]);
+            //create a Mat out of bitmap
+            Mat mat = new Mat();
+            Mat src = new Mat();
+//            Mat mat = new Mat(bitmaps[0].getHeight(), bitmaps[0].getWidth(), CvType.CV_8UC1);
 
-            publishProgress("Starting sum calculations...");
+            Utils.bitmapToMat(bitmaps[0], mat);
+            Utils.bitmapToMat(bitmaps[0], src);
 
-            return bitmaps[0];
-        }
+            //converts CV_8UC4 to CV_8UC1 for processing
+            Imgproc.cvtColor(mat,mat, Imgproc.COLOR_BGR2GRAY);
 
-        private void convoluteImg(Bitmap bitmap) {
+            publishProgress("Starting convolution..."); // reikia naudotis library
+            GaussianBlur( mat, mat, new Size(9, 9), 15, 15 );
 
+            publishProgress("Starting sum calculations..."); // Actual magic
+            Mat circles = new Mat();
 
+//            Core.inRange(mat, new Scalar(50, 100, 0), new Scalar(95, 255, 255), mat);
 
+            /// Apply the Hough Transform to find the circles
+            HoughCircles( mat, circles, CV_HOUGH_GRADIENT, 1, 10, 150, 50, 0, 0 );
+
+            Log.d(TAG, "Size of circles - " + circles.size());
+            Log.d(TAG, "Hough");
+
+            for (int i = 0; i < circles.cols(); i++) {
+                double[] vCircle = circles.get(0, i);
+
+                Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+                int radius = (int)Math.round(vCircle[2]);
+
+//                Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0), 1);
+//            }
+//
+//            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(src, resultBitmap);
+
+                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 1);
+            }
+
+            Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(mat, resultBitmap);
+
+            return resultBitmap;
         }
 
 
