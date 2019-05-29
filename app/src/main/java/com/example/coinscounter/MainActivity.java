@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        imgView.setOnTouchListener(this);
+
 
 //        if (OpenCVLoader.initDebug()) {
 //            Toast.makeText(this, "openCv successfully loaded", Toast.LENGTH_SHORT).show();
@@ -95,6 +99,35 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
 //        }
     }
+
+//    public boolean onTouch(View v, MotionEvent event) {
+//        int action = event.getAction();
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN:
+//                downx = event.getX();
+//                downy = event.getY();
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                upx = event.getX();
+//                upy = event.getY();
+//                canvas.drawLine(downx, downy, upx, upy, paint);
+//                imageView.invalidate();
+//                downx = upx;
+//                downy = upy;
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                upx = event.getX();
+//                upy = event.getY();
+//                canvas.drawLine(downx, downy, upx, upy, paint);
+//                imageView.invalidate();
+//                break;
+//            case MotionEvent.ACTION_CANCEL:
+//                break;
+//            default:
+//                break;
+//        }
+//        return true;
+//    }
 
     private void getCircles(Bitmap bm) {
         new ImageProcessing(this, 700, seek.getProgress()).execute(bm);
@@ -305,6 +338,12 @@ public class MainActivity extends AppCompatActivity {
 
             Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mat, resultBitmap);
+
+            //TODO get rid of this
+            float degrees = 90;//rotation degree
+            Matrix matrix = new Matrix();
+            matrix.setRotate(degrees);
+            resultBitmap = Bitmap.createBitmap(resultBitmap, 0, 0, resultBitmap.getWidth(), resultBitmap.getHeight(), matrix, true);
 
             return resultBitmap;
         }
