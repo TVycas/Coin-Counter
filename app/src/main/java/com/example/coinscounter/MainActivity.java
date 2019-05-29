@@ -32,6 +32,7 @@ import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -42,9 +43,13 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughCircles;
+import static org.opencv.imgproc.Imgproc.blur;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.intersectConvexConvex;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,13 +59,12 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG = "MainActivity";
 
     String currentPhotoPath;
-    Bitmap takenImage;
+    //TODO if I have the path why do I need the bitmap?
+    Bitmap takenImage ;
     ImageView imgView;
     TextView text;
     SeekBar seek;
     int[] viewCoords = new int[2];
-    float x;
-    float y;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -71,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         imgView = findViewById(R.id.imageView);
         text = findViewById(R.id.threshText);
         seek = findViewById(R.id.seekBar);
+
+        //TODO remove
+        takenImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
 
         imgView.getLocationOnScreen(viewCoords);
 
@@ -102,12 +109,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                    //TODO fix variable declarations
                     int touchX = (int) motionEvent.getX();
                     int touchY = (int) motionEvent.getY();
 
-                    x = touchX - viewCoords[0]; // viewCoords[0] is the X coordinate
-                    y = touchY - viewCoords[1]; // viewCoords[1] is the y coordinate
+                    int x = touchX - viewCoords[0]; // viewCoords[0] is the X coordinate
+                    int y = touchY - viewCoords[1]; // viewCoords[1] is the y coordinate
                     Log.v(TAG, "X= " + x + " Y= " + y);
+                    selectCoinOnLocation(x, y);
                 }
                 return true;
             }
@@ -121,6 +130,36 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
 //            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
 //        }
+    }
+    //TODO remove this
+    private void showMat(Mat mat){
+        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat, resultBitmap);
+        imgView.setImageBitmap(resultBitmap);
+    }
+
+    private void selectCoinOnLocation(int x, int y){
+        //TODO get rid of this
+        float degrees = 90;//rotation degree
+        Matrix matrix = new Matrix();
+        matrix.setRotate(degrees);
+        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
+
+        Mat uncropped = new Mat();
+        Utils.bitmapToMat(rotatedImage, uncropped);
+
+        cvtColor(uncropped, uncropped, COLOR_BGR2GRAY);
+
+        //TODO how to determine the kernel size?
+        blur( uncropped, uncropped, new Size( 70, 70), new Point(-1,-1));
+
+
+        showMat(uncropped);
+
+//        Rect roi = new Rect(x, y, width, height);
+//        Mat cropped = new Mat(uncropped, roi);
+
     }
 
 
@@ -300,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
             Utils.bitmapToMat(bitmaps[0], mat);
 
             //converts CV_8UC4 to CV_8UC1 for processing
-            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+            cvtColor(mat, mat, COLOR_BGR2GRAY);
 
             publishProgress("Starting convolution...");
             GaussianBlur(mat, mat, new Size(9, 9), 3, 3);
@@ -373,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
             activity.text.setText("Threshold: " + lowerThreshold);
         }
 
+        //TODO remove
         private Bitmap RGBtoGrayscale(Bitmap img) {
             float[] matrix = new float[]{
                     0.3f, 0.59f, 0.11f, 0, 0,
