@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -292,21 +293,22 @@ public class MainActivity extends AppCompatActivity {
             int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
             bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth, true);
 
+            Mat src = new Mat();
+            Utils.bitmapToMat(bitmaps[0], src);
+
             publishProgress("Turning grayscale...");
             bitmaps[0] = RGBtoGrayscale(bitmaps[0]);
 
             //create a Mat out of bitmap
             Mat mat = new Mat();
-            Mat src = new Mat();
 //            Mat mat = new Mat(bitmaps[0].getHeight(), bitmaps[0].getWidth(), CvType.CV_8UC1);
 
             Utils.bitmapToMat(bitmaps[0], mat);
-            Utils.bitmapToMat(bitmaps[0], src);
 
             //converts CV_8UC4 to CV_8UC1 for processing
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
 
-            publishProgress("Starting convolution..."); // reikia naudotis library
+            publishProgress("Starting convolution...");
             GaussianBlur(mat, mat, new Size(9, 9), 3, 3);
 
             publishProgress("Starting sum calculations..."); // Actual magic
@@ -327,17 +329,19 @@ public class MainActivity extends AppCompatActivity {
                 Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
                 int radius = (int) Math.round(vCircle[2]);
 
-//                Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0), 1);
-//            }
-//
-//            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
-//            Utils.matToBitmap(src, resultBitmap);
-
-                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 2);
+                Log.d(TAG, "mat type: " + src.type());
+                //TODO fix this to be red
+                Imgproc.circle(src, pt, radius, new Scalar(0, 255, 0, 0), 2); //The mat is in 4 channels
             }
 
-            Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(mat, resultBitmap);
+            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(src, resultBitmap);
+
+//                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 2);
+//            }
+//
+//            Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(mat, resultBitmap);
 
             //TODO get rid of this
             float degrees = 90;//rotation degree
