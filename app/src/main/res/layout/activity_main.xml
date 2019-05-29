@@ -8,14 +8,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="365dp"
-        android:layout_height="353dp"
+        android:layout_width="362dp"
+        android:layout_height="482dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="8dp"
         android:src="@android:color/black"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
@@ -24,8 +25,8 @@
         android:id="@+id/photoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginBottom="28dp"
         android:onClick="openCamera"
         android:text="Take picture"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -35,24 +36,36 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="252dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="28dp"
         android:onClick="loadImage"
         android:text="Load image"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/photoButton" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/threshText"
         android:layout_width="199dp"
         android:layout_height="34dp"
-        android:layout_marginStart="84dp"
+        android:layout_marginStart="104dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="80dp"
         android:text="TextView"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/photoButton"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.294" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="376dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible" />
 </android.support.constraint.ConstraintLayout>

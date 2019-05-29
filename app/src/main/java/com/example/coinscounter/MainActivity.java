@@ -1,7 +1,6 @@
 package com.example.coinscounter;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,27 +9,23 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -43,7 +38,6 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.support.v7.app.AlertDialog.*;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughCircles;
@@ -53,10 +47,13 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PERMISSION_TO_WRITE_STORAGE = 2;
     static final int PERMISSION_TO_READ_STORAGE = 3;
-    private static final String TAG = "MainActivity";
+    static final String TAG = "MainActivity";
+
     String currentPhotoPath;
+    Bitmap takenImage;
     ImageView imgView;
     TextView text;
+    SeekBar seek;
 
 
     @Override
@@ -64,37 +61,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imgView = findViewById(R.id.imageView);
-        text = findViewById(R.id.textView);
+        text = findViewById(R.id.threshText);
+        seek = findViewById(R.id.seekBar);
 
-        if(OpenCVLoader.initDebug()){
-            Toast.makeText(this, "openCv successfully loaded", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
-        }
-    }
+        OpenCVLoader.initDebug();
 
-    public void openCamera(View view) {
-        imgView.setVisibility(View.INVISIBLE);
+        seek.setMax(150);
+        seek.setProgress(50);
 
-        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntent();
+        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                Log.i("The threshold is: ", Integer.toString(progress));
+                text.setText("Threshold:" + seek.getProgress());
+            }
 
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_TO_WRITE_STORAGE);
-        }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //TODO maybe add functionality to upload a picture
+                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+            }
+        });
+
+
+//        if (OpenCVLoader.initDebug()) {
+//            Toast.makeText(this, "openCv successfully loaded", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    private void getCircles(Bitmap bm) {
+        new ImageProcessing(this, 700, seek.getProgress()).execute(bm);
     }
 
     public void loadImage(View view) {
         imgView.setVisibility(View.INVISIBLE);
 
-        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            loadImage();
+
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+            seek.setVisibility(View.VISIBLE);
+            text.setVisibility(View.VISIBLE);
 
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -108,46 +121,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_TO_WRITE_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                Log.d(TAG, "grantResults.length = " + grantResults.length + "\n grantResults[0] = " + grantResults[0] + " " + PackageManager.PERMISSION_GRANTED);
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    dispatchTakePictureIntent();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
+    public void openCamera(View view) {
+        imgView.setVisibility(View.INVISIBLE);
 
-            case PERMISSION_TO_READ_STORAGE: {
-                Log.d(TAG, "grantResults.length = " + grantResults.length + "\n grantResults[0] = " + grantResults[0] + " " + PackageManager.PERMISSION_GRANTED);
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    loadImage();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            dispatchTakePictureIntent();
+            seek.setVisibility(View.VISIBLE);
+            text.setVisibility(View.VISIBLE);
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
+            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_TO_WRITE_STORAGE);
         }
-    }
-
-    private void loadImage(){
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
-        new ImageProcessing(this, 700).execute(bm);
     }
 
     private void dispatchTakePictureIntent() {
@@ -191,24 +180,64 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap takenImage = BitmapFactory.decodeFile(currentPhotoPath);
-            new ImageProcessing(this, 700).execute(takenImage);
+            takenImage = BitmapFactory.decodeFile(currentPhotoPath);
+            getCircles(takenImage);
         } else {
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_TO_WRITE_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    dispatchTakePictureIntent();
+                    seek.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.VISIBLE);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            case PERMISSION_TO_READ_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+                    seek.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.VISIBLE);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
 
 
     private static class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         private static final String TAG = "ImageProcessing";
-        private WeakReference<MainActivity> activityWeakReference;
         private final int imageWidth;
+        private final int lowerThreshold;
+        private WeakReference<MainActivity> activityWeakReference;
 
 
-        ImageProcessing(MainActivity activity, int imageWidth) {
+        ImageProcessing(MainActivity activity, int imageWidth, int lowerThreshold) {
             activityWeakReference = new WeakReference<MainActivity>(activity);
             this.imageWidth = imageWidth;
+            this.lowerThreshold = lowerThreshold;
         }
 
         @Override
@@ -242,10 +271,10 @@ public class MainActivity extends AppCompatActivity {
             Utils.bitmapToMat(bitmaps[0], src);
 
             //converts CV_8UC4 to CV_8UC1 for processing
-            Imgproc.cvtColor(mat,mat, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
 
             publishProgress("Starting convolution..."); // reikia naudotis library
-            GaussianBlur( mat, mat, new Size(9, 9), 15, 15 );
+            GaussianBlur(mat, mat, new Size(9, 9), 3, 3);
 
             publishProgress("Starting sum calculations..."); // Actual magic
             Mat circles = new Mat();
@@ -253,7 +282,8 @@ public class MainActivity extends AppCompatActivity {
 //            Core.inRange(mat, new Scalar(50, 100, 0), new Scalar(95, 255, 255), mat);
 
             /// Apply the Hough Transform to find the circles
-            HoughCircles( mat, circles, CV_HOUGH_GRADIENT, 1, 10, 150, 50, 0, 0 );
+            //TODO upper threshold needs to be not this
+            HoughCircles(mat, circles, CV_HOUGH_GRADIENT, 1, 10, 150, lowerThreshold, 0, 0);
 
             Log.d(TAG, "Size of circles - " + circles.size());
             Log.d(TAG, "Hough");
@@ -262,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 double[] vCircle = circles.get(0, i);
 
                 Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
-                int radius = (int)Math.round(vCircle[2]);
+                int radius = (int) Math.round(vCircle[2]);
 
 //                Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0), 1);
 //            }
@@ -270,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 //            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
 //            Utils.matToBitmap(src, resultBitmap);
 
-                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 1);
+                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 2);
             }
 
             Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
@@ -304,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
             activity.imgView.setImageBitmap(bitmap);
             activity.imgView.setVisibility(View.VISIBLE);
 
-            activity.text.setText("");
-            activity.text.setVisibility(View.INVISIBLE);
+            activity.text.setText("Threshold: " + lowerThreshold);
         }
 
         private Bitmap RGBtoGrayscale(Bitmap img) {
