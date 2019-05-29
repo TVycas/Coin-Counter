@@ -1,6 +1,7 @@
 package com.example.coinscounter;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -57,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgView;
     TextView text;
     SeekBar seek;
+    int[] viewCoords = new int[2];
+    float x;
+    float y;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         imgView = findViewById(R.id.imageView);
         text = findViewById(R.id.threshText);
         seek = findViewById(R.id.seekBar);
+
+        imgView.getLocationOnScreen(viewCoords);
 
         OpenCVLoader.initDebug();
 
@@ -91,6 +98,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        imgView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                    int touchX = (int) motionEvent.getX();
+                    int touchY = (int) motionEvent.getY();
+
+                    x = touchX - viewCoords[0]; // viewCoords[0] is the X coordinate
+                    y = touchY - viewCoords[1]; // viewCoords[1] is the y coordinate
+                    Log.v(TAG, "X= " + x + " Y= " + y);
+                }
+                return true;
+            }
+        });
+
 //        imgView.setOnTouchListener(this);
 
 
@@ -101,34 +123,6 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-//    public boolean onTouch(View v, MotionEvent event) {
-//        int action = event.getAction();
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN:
-//                downx = event.getX();
-//                downy = event.getY();
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                upx = event.getX();
-//                upy = event.getY();
-//                canvas.drawLine(downx, downy, upx, upy, paint);
-//                imageView.invalidate();
-//                downx = upx;
-//                downy = upy;
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                upx = event.getX();
-//                upy = event.getY();
-//                canvas.drawLine(downx, downy, upx, upy, paint);
-//                imageView.invalidate();
-//                break;
-//            case MotionEvent.ACTION_CANCEL:
-//                break;
-//            default:
-//                break;
-//        }
-//        return true;
-//    }
 
     private void getCircles(Bitmap bm) {
         new ImageProcessing(this, 700, seek.getProgress()).execute(bm);
@@ -329,19 +323,18 @@ public class MainActivity extends AppCompatActivity {
                 Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
                 int radius = (int) Math.round(vCircle[2]);
 
-                Log.d(TAG, "mat type: " + src.type());
-                //TODO fix this to be red
-                Imgproc.circle(src, pt, radius, new Scalar(0, 255, 0, 0), 2); //The mat is in 4 channels
-            }
-
-            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(src, resultBitmap);
-
-//                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 2);
+//                //TODO fix this to be red
+//                Imgproc.circle(src, pt, radius, new Scalar(0, 255, 0, 0), 2); //The mat is in 4 channels
 //            }
 //
-//            Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
-//            Utils.matToBitmap(mat, resultBitmap);
+//            Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(src, resultBitmap);
+
+                Imgproc.circle(mat, pt, radius, new Scalar(255, 0, 0), 2);
+            }
+
+            Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(mat, resultBitmap);
 
             //TODO get rid of this
             float degrees = 90;//rotation degree
