@@ -29,10 +29,8 @@ import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -62,9 +60,12 @@ public class MainActivity extends AppCompatActivity {
     //TODO if I have the path why do I need the bitmap?
     Bitmap takenImage ;
     ImageView imgView;
-    TextView text;
-    SeekBar seek;
+    TextView threshText;
+    SeekBar threshSeek;
+    TextView distText;
+    SeekBar distSeek;
     int[] viewCoords = new int[2];
+    Mat circles;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -73,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imgView = findViewById(R.id.imageView);
-        text = findViewById(R.id.threshText);
-        seek = findViewById(R.id.seekBar);
+        threshText = findViewById(R.id.threshTextView);
+        threshSeek = findViewById(R.id.threshSeekBar);
+        distText = findViewById(R.id.distTextView);
+        distSeek = findViewById(R.id.distSeekBar);
 
         //TODO remove
         takenImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
@@ -83,14 +86,37 @@ public class MainActivity extends AppCompatActivity {
 
         OpenCVLoader.initDebug();
 
-        seek.setMax(150);
-        seek.setProgress(50);
+        threshSeek.setMax(100);
+        threshSeek.setProgress(50);
 
-        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        distSeek.setMax(150);
+        distSeek.setProgress(50);
+
+        //TODO reuse the code
+        threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 //                Log.i("The threshold is: ", Integer.toString(progress));
-                text.setText("Threshold:" + seek.getProgress());
+                threshText.setText("Threshold:" + threshSeek.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //TODO maybe add functionality to upload a picture
+                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+            }
+        });
+
+        distSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                Log.i("The threshold is: ", Integer.toString(progress));
+                distText.setText("MinDist:" + distSeek.getProgress());
             }
 
             @Override
@@ -144,10 +170,8 @@ public class MainActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.setRotate(degrees);
         Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
-//        Log.d(TAG, "bm height (y) = " + rotatedImage.getHeight() + "bm length = " + rotatedImage.getRowBytes());
         rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
 
-        Log.d(TAG, "imgView stats = " + imgView.getWidth() + " " + imgView.getHeight());
         //Bitmap to mat
         Mat fullMat = new Mat();
         Utils.bitmapToMat(rotatedImage, fullMat);
@@ -173,19 +197,36 @@ public class MainActivity extends AppCompatActivity {
 
     private int findCoinDiameter(int x, int y, Mat imgMat) {
         double[] currentColor = imgMat.get(y,x);
-        Log.v(TAG, "mat type = " + imgMat.type() + " currentColor.length = " + currentColor.length + ", value = " + currentColor[0]);
-        Log.v(TAG, "mat rows = " + imgMat.rows() + " mat cols = " + imgMat.cols());
+        Log.v(TAG, "Value = " + currentColor[0]);
 
-        Point pt1 = new Point(0, 0);
-        Point pt2 = new Point(x, y);
-        Imgproc.line(imgMat, pt1, pt2, new Scalar(0,255,0), 3);
+        int backgroundValue = findBackgroundValue(imgMat);
+
+
         showMat(imgMat);
         return 0;
     }
 
+    private int findBackgroundValue(Mat imgMat) {
+        int averageValue  = 0;
+        if(!circles.empty()) {
+            for (int i = 0; i < circles.cols() || i == 2; i++) {
+                double[] vCircle = circles.get(0, i);
+
+                Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
+                int radius = (int) Math.round(vCircle[2]);
+
+                averageValue = (int) (Math.round(vCircle[0]) + Math.round(vCircle[2]) + 5);
+            }
+        }else{
+            //TODO find the most common value for image?
+        }
+
+        return averageValue;
+    }
+
 
     private void getCircles(Bitmap bm) {
-        new ImageProcessing(this, 700, seek.getProgress()).execute(bm);
+        new ImageProcessing(this, 700, threshSeek.getProgress(), distSeek.getProgress()).execute(bm);
     }
 
     public void loadImage(View view) {
@@ -194,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
-            seek.setVisibility(View.VISIBLE);
-            text.setVisibility(View.VISIBLE);
+            threshSeek.setVisibility(View.VISIBLE);
+            threshText.setVisibility(View.VISIBLE);
 
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -214,8 +255,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             dispatchTakePictureIntent();
-            seek.setVisibility(View.VISIBLE);
-            text.setVisibility(View.VISIBLE);
+            threshSeek.setVisibility(View.VISIBLE);
+            threshText.setVisibility(View.VISIBLE);
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
@@ -284,8 +325,8 @@ public class MainActivity extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     dispatchTakePictureIntent();
-                    seek.setVisibility(View.VISIBLE);
-                    text.setVisibility(View.VISIBLE);
+                    threshSeek.setVisibility(View.VISIBLE);
+                    threshText.setVisibility(View.VISIBLE);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -299,8 +340,8 @@ public class MainActivity extends AppCompatActivity {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                     getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
-                    seek.setVisibility(View.VISIBLE);
-                    text.setVisibility(View.VISIBLE);
+                    threshSeek.setVisibility(View.VISIBLE);
+                    threshText.setVisibility(View.VISIBLE);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -319,13 +360,17 @@ public class MainActivity extends AppCompatActivity {
         private static final String TAG = "ImageProcessing";
         private final int imageWidth;
         private final int lowerThreshold;
+        private final int dist;
         private WeakReference<MainActivity> activityWeakReference;
+        private Mat circles;
 
 
-        ImageProcessing(MainActivity activity, int imageWidth, int lowerThreshold) {
+        ImageProcessing(MainActivity activity, int imageWidth, int lowerThreshold, int dist) {
             activityWeakReference = new WeakReference<MainActivity>(activity);
             this.imageWidth = imageWidth;
             this.lowerThreshold = lowerThreshold;
+            this.dist = dist;
+            circles = new Mat();
         }
 
         @Override
@@ -337,42 +382,50 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            activity.text.setVisibility(View.VISIBLE);
+            activity.threshText.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Bitmap doInBackground(Bitmap... bitmaps) {
-            publishProgress("Starting to compress...");
+
 
             int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
-            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth, true);
+//            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth, true);
 
             Mat src = new Mat();
             Utils.bitmapToMat(bitmaps[0], src);
 
-            publishProgress("Turning grayscale...");
-            bitmaps[0] = RGBtoGrayscale(bitmaps[0]);
+            publishProgress("Starting to resize...");
+
+            MainActivity activity = activityWeakReference.get();
+            if (activity == null || activity.isFinishing()) {
+                return null;
+            }
+
+            Size sz = new Size(imageWidth, adjustedHeigth);
+            Imgproc.resize( src, src, sz );
+
 
             //create a Mat out of bitmap
-            Mat mat = new Mat();
-//            Mat mat = new Mat(bitmaps[0].getHeight(), bitmaps[0].getWidth(), CvType.CV_8UC1);
+            Mat mat = src.clone();
 
-            Utils.bitmapToMat(bitmaps[0], mat);
+//            Utils.bitmapToMat(bitmaps[0], mat);
 
+            publishProgress("Turning grayscale...");
             //converts CV_8UC4 to CV_8UC1 for processing
             cvtColor(mat, mat, COLOR_BGR2GRAY);
 
             publishProgress("Starting convolution...");
+            //TODO maybe the average is better?
             GaussianBlur(mat, mat, new Size(9, 9), 3, 3);
-
+//            blur( mat, mat, new Size( 10, 10), new Point(-1,-1));
             publishProgress("Starting sum calculations..."); // Actual magic
-            Mat circles = new Mat();
 
 //            Core.inRange(mat, new Scalar(50, 100, 0), new Scalar(95, 255, 255), mat);
 
             /// Apply the Hough Transform to find the circles
             //TODO upper threshold needs to be not this
-            HoughCircles(mat, circles, CV_HOUGH_GRADIENT, 1, 10, 150, lowerThreshold, 0, 0);
+            HoughCircles(mat, circles, CV_HOUGH_GRADIENT, 1, dist, 150, lowerThreshold, 0, 0);
 
             Log.d(TAG, "Size of circles - " + circles.size());
             Log.d(TAG, "Hough");
@@ -415,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            activity.text.setText(values[0]);
+            activity.threshText.setText(values[0]);
         }
 
         @Override
@@ -430,7 +483,9 @@ public class MainActivity extends AppCompatActivity {
             activity.imgView.setImageBitmap(bitmap);
             activity.imgView.setVisibility(View.VISIBLE);
 
-            activity.text.setText("Threshold: " + lowerThreshold);
+            activity.threshText.setText("Threshold: " + lowerThreshold);
+
+            activity.circles = circles;
         }
 
         //TODO remove
