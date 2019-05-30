@@ -144,22 +144,43 @@ public class MainActivity extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.setRotate(degrees);
         Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+//        Log.d(TAG, "bm height (y) = " + rotatedImage.getHeight() + "bm length = " + rotatedImage.getRowBytes());
         rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
 
-        Mat uncropped = new Mat();
-        Utils.bitmapToMat(rotatedImage, uncropped);
+        Log.d(TAG, "imgView stats = " + imgView.getWidth() + " " + imgView.getHeight());
+        //Bitmap to mat
+        Mat fullMat = new Mat();
+        Utils.bitmapToMat(rotatedImage, fullMat);
 
-        cvtColor(uncropped, uncropped, COLOR_BGR2GRAY);
+        //Resize the mat to be the same as imageView
+        Size sz = new Size(imgView.getWidth(),imgView.getHeight());
+        Imgproc.resize( fullMat, fullMat, sz );
+
+        //Turning to grayscale
+        cvtColor(fullMat, fullMat, COLOR_BGR2GRAY);
 
         //TODO how to determine the kernel size?
-        blur( uncropped, uncropped, new Size( 70, 70), new Point(-1,-1));
+        blur( fullMat, fullMat, new Size( 40, 40), new Point(-1,-1));
 
+        int diameter = findCoinDiameter(x, y, fullMat);
 
-        showMat(uncropped);
+        showMat(fullMat);
 
 //        Rect roi = new Rect(x, y, width, height);
-//        Mat cropped = new Mat(uncropped, roi);
+//        Mat cropped = new Mat(fullMat, roi);
 
+    }
+
+    private int findCoinDiameter(int x, int y, Mat imgMat) {
+        double[] currentColor = imgMat.get(y,x);
+        Log.v(TAG, "mat type = " + imgMat.type() + " currentColor.length = " + currentColor.length + ", value = " + currentColor[0]);
+        Log.v(TAG, "mat rows = " + imgMat.rows() + " mat cols = " + imgMat.cols());
+
+        Point pt1 = new Point(0, 0);
+        Point pt2 = new Point(x, y);
+        Imgproc.line(imgMat, pt1, pt2, new Scalar(0,255,0), 3);
+        showMat(imgMat);
+        return 0;
     }
 
 
