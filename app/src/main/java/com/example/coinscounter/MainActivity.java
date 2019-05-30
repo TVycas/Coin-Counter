@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     int[] viewCoords = new int[2];
     Mat circles;
 
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                Log.i("The threshold is: ", Integer.toString(progress));
                 threshText.setText("Threshold:" + threshSeek.getProgress());
             }
 
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         distSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                Log.i("The threshold is: ", Integer.toString(progress));
                 distText.setText("MinDist:" + distSeek.getProgress());
             }
 
@@ -157,6 +155,49 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
 //        }
     }
+
+    public void calculateSum(View view) {
+        //steps
+        //1 determine one of the coins worth
+        //2 use it and use the proportions based on type of money to calc the rest of the coins worth
+        //3 sum it up and display
+
+        int[] coinWorth = new int[circles.cols()];
+        coinWorth[0] = askCoinWorth(0);
+    }
+
+    private int askCoinWorth(int index) {
+        //TODO remove the 700
+        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        int adjustedHeigth = 700 * rotatedImage.getHeight() / rotatedImage.getWidth();
+        rotatedImage = Bitmap.createScaledBitmap(rotatedImage, 700, adjustedHeigth, true);
+
+//        //TODO get rid of this
+//        float degrees = 90;//rotation degree
+//        Matrix matrix = new Matrix();
+//        matrix.setRotate(degrees);
+//        rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
+
+        double[] circle = circles.get(0, index);
+        Log.d(TAG, "Bitmap: " + rotatedImage.getHeight() + " " + rotatedImage.getWidth());
+        Log.d(TAG, (float) circle[0] + " " + (float)circle[1] + " " + (float)circle[2]);
+
+        Mat mat = new Mat();
+        Utils.bitmapToMat(rotatedImage, mat);
+        Imgproc.circle(mat, new Point(circle[0], circle[1]), (int)circle[2], new Scalar(255, 0, 0), 2);
+        showMat(mat);
+
+//        Canvas canvas = new Canvas(rotatedImage);
+//        Paint paint = new Paint();
+//        paint.setColor(Color.RED);
+//        canvas.drawBitmap(rotatedImage, new Matrix(), null);
+//        canvas.drawCircle((float) circle[0], (float)circle[1], (float)circle[2], paint);
+//        imgView.setImageBitmap(rotatedImage);
+
+        return 0;
+    }
+
+
     //TODO remove this
     private void showMat(Mat mat){
         Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
@@ -397,11 +438,6 @@ public class MainActivity extends AppCompatActivity {
 
             publishProgress("Starting to resize...");
 
-            MainActivity activity = activityWeakReference.get();
-            if (activity == null || activity.isFinishing()) {
-                return null;
-            }
-
             Size sz = new Size(imageWidth, adjustedHeigth);
             Imgproc.resize( src, src, sz );
 
@@ -430,6 +466,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Size of circles - " + circles.size());
             Log.d(TAG, "Hough");
 
+            Log.d(TAG, "Mat: " + mat.rows() + " " + mat.cols());
+
             for (int i = 0; i < circles.cols(); i++) {
                 double[] vCircle = circles.get(0, i);
 
@@ -449,11 +487,11 @@ public class MainActivity extends AppCompatActivity {
             Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(mat, resultBitmap);
 
-            //TODO get rid of this
-            float degrees = 90;//rotation degree
-            Matrix matrix = new Matrix();
-            matrix.setRotate(degrees);
-            resultBitmap = Bitmap.createBitmap(resultBitmap, 0, 0, resultBitmap.getWidth(), resultBitmap.getHeight(), matrix, true);
+//            //TODO get rid of this
+//            float degrees = 90;//rotation degree
+//            Matrix matrix = new Matrix();
+//            matrix.setRotate(degrees);
+//            resultBitmap = Bitmap.createBitmap(resultBitmap, 0, 0, resultBitmap.getWidth(), resultBitmap.getHeight(), matrix, true);
 
             return resultBitmap;
         }
