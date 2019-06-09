@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.coinscounter"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -24,6 +24,10 @@ android {
         ndkBuild {
             path 'build/intermediates/ndk/debug/Android.mk'
         }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 

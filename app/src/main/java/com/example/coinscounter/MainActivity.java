@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -41,6 +40,10 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
@@ -48,6 +51,7 @@ import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughCircles;
 import static org.opencv.imgproc.Imgproc.blur;
 import static org.opencv.imgproc.Imgproc.cvtColor;
+import static org.opencv.imgproc.Imgproc.floodFill;
 import static org.opencv.imgproc.Imgproc.intersectConvexConvex;
 
 public class MainActivity extends AppCompatActivity {
@@ -80,17 +84,17 @@ public class MainActivity extends AppCompatActivity {
         distSeek = findViewById(R.id.distSeekBar);
 
         //TODO remove
-        takenImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        takenImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
 
         imgView.getLocationOnScreen(viewCoords);
 
         OpenCVLoader.initDebug();
 
         threshSeek.setMax(100);
-        threshSeek.setProgress(50);
+        threshSeek.setProgress(24);
 
         distSeek.setMax(150);
-        distSeek.setProgress(50);
+        distSeek.setProgress(33);
 
         //TODO reuse the code
         threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 //TODO maybe add functionality to upload a picture
-                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
             }
         });
 
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 //TODO maybe add functionality to upload a picture
-                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
             }
         });
 
@@ -156,19 +160,123 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    public void calculateSum(View view) {
+    public void calculateSum(View view) throws InterruptedException {
+        float coinsWorth = 0;
         //steps
         //1 determine one of the coins worth
         //2 use it and use the proportions based on type of money to calc the rest of the coins worth
         //3 sum it up and display
 
-        int[] coinWorth = new int[circles.cols()];
-        coinWorth[0] = askCoinWorth(0);
+
+        double ratio =  circles.get(0,0)[2] / EuroCoins.valueMap.get(askCoinWorth(1));
+
+        Log.d(TAG, "ratio: " + ratio);
+        Log.d(TAG, "coinDim: " + circles.get(0,0)[2]);
+        Log.d(TAG, "coinDimReal: " + EuroCoins.valueMap.get(1f));
+
+        TreeMap<Double, Float> ratioToValueMap = buildRatioTreeMap(ratio);
+
+//        for(int i = 0; i < circles.cols(); i++){
+//            askCoinWorth(i);
+//            Thread.sleep(5000l);
+//            Log.d(TAG, "circle = " + circles.get(0, i)[2]);
+//            coinsWorth += mappedValue(ratioToValueMap, circles.get(0, i)[2]);
+//            Log.d(TAG, "intermediate sum = " + coinsWorth);
+//        }
+
+        Toast.makeText(this, "Sum = " + coinsWorth, Toast.LENGTH_LONG).show();
     }
 
-    private int askCoinWorth(int index) {
+    private static Float mappedValue(TreeMap<Double, Float> map, Double key) {
+        Map.Entry<Double, Float> entry = map.floorEntry(key);
+
+        if (entry != null && entry.getValue() == null) {
+            entry = map.lowerEntry(key);
+        }
+
+        return entry == null ? null : entry.getValue();
+    }
+
+    private TreeMap<Double, Float> buildRatioTreeMap(double ratio) {
+        TreeMap<Double, Float> ratioToValueMap = new TreeMap<>();
+        Iterator it = EuroCoins.valueMap.entrySet().iterator();
+
+        //There will always be values from the EuroCoins class so no need to check
+        Map.Entry pair = (Map.Entry) it.next();
+        double previousValue = (float) pair.getValue()  * ratio;
+        float previousKey = (float) pair.getKey();
+
+        pair = (Map.Entry) it.next();
+        double currentValue = (float) pair.getValue() * ratio;
+
+        double gap = (currentValue - previousValue) / 2;
+
+        Log.d(TAG, "p - g = " + (previousValue - gap) + " => " + previousKey);
+        ratioToValueMap.put(previousValue - gap, previousKey);
+        Log.d(TAG, "p + g = " + (previousValue + gap) + " => " + null);
+        ratioToValueMap.put(previousValue + gap, null);
+
+        float currentKey = (float) pair.getKey();
+
+        //find the number of digits after the decimal point
+        String s=String.valueOf(previousValue + gap);
+        StringTokenizer t=new StringTokenizer(s,".");
+        t.nextToken();
+        String digitsAfterDecimal=t.nextToken();
+
+        Log.d(TAG, previousValue + " + " + gap + " = " + (previousValue + gap)
+                + "\ndigitsAfterDecimal = " + digitsAfterDecimal
+                + "\ndigitsAfterDecimal.length = " + digitsAfterDecimal.length());
+
+        double gapPlusDec = (previousValue + gap) + (1 / (float)(10 * digitsAfterDecimal.length()));
+        Log.d(TAG, "p + g + d = " + gapPlusDec + " => " + currentKey);
+        ratioToValueMap.put(gapPlusDec, currentKey);
+
+        while (it.hasNext()){
+//            previousKey = (float) pair.getKey();
+            previousValue = (float) pair.getValue()  * ratio;
+
+            pair = (Map.Entry) it.next();
+
+            currentValue = (float) pair.getValue() * ratio;
+            currentKey = (float) pair.getKey();
+
+            gap = (currentValue - previousValue) / 2;
+
+            Log.d(TAG, "p + g = " + (previousValue + gap) + " => " + null);
+            ratioToValueMap.put(previousValue + gap, null);
+
+
+            s=String.valueOf(previousValue + gap);
+            t=new StringTokenizer(s,".");
+            t.nextToken();
+            digitsAfterDecimal=t.nextToken();
+
+
+            gapPlusDec = (previousValue + gap) + (1 / (float)(10 * digitsAfterDecimal.length()));
+            Log.d(TAG, "p + g + d = " + gapPlusDec + " => " + currentKey);
+            ratioToValueMap.put(gapPlusDec, currentKey);
+        }
+
+        ratioToValueMap.put(currentValue + gap, null);
+//        n1=s1.length();
+//        n2=digitsAfterDecimal.length();
+
+        for(Map.Entry<Double, Float> entry : ratioToValueMap.entrySet()) {
+            Double key = entry.getKey();
+            Float value = entry.getValue();
+
+            System.out.println(key + " => " + value);
+        }
+
+
+
+        return ratioToValueMap;
+    }
+
+    private float askCoinWorth(int index){
         //TODO remove the 700
-        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
         int adjustedHeigth = 700 * rotatedImage.getHeight() / rotatedImage.getWidth();
         rotatedImage = Bitmap.createScaledBitmap(rotatedImage, 700, adjustedHeigth, true);
 
@@ -187,6 +295,8 @@ public class MainActivity extends AppCompatActivity {
         Imgproc.circle(mat, new Point(circle[0], circle[1]), (int)circle[2], new Scalar(255, 0, 0), 2);
         showMat(mat);
 
+        //TODO a function to select the amount
+
 //        Canvas canvas = new Canvas(rotatedImage);
 //        Paint paint = new Paint();
 //        paint.setColor(Color.RED);
@@ -194,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 //        canvas.drawCircle((float) circle[0], (float)circle[1], (float)circle[2], paint);
 //        imgView.setImageBitmap(rotatedImage);
 
-        return 0;
+        return 1f;
     }
 
 
@@ -210,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
         float degrees = 90;//rotation degree
         Matrix matrix = new Matrix();
         matrix.setRotate(degrees);
-        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins);
+        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
         rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
 
         //Bitmap to mat
@@ -275,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+            getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
             threshSeek.setVisibility(View.VISIBLE);
             threshText.setVisibility(View.VISIBLE);
 
@@ -380,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins));
+                    getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
                     threshSeek.setVisibility(View.VISIBLE);
                     threshText.setVisibility(View.VISIBLE);
                 } else {
