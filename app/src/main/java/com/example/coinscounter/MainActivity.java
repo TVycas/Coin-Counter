@@ -11,10 +11,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.coinscounter.viewmodel.MainActivityViewModel;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -39,6 +43,8 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.example.coinscounter.utills.PermissionManager;
+
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
@@ -55,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     static final int PERMISSION_TO_READ_STORAGE = 3;
     static final String TAG = "MainActivity";
 
+    private MainActivityViewModel viewModel;
     Button takePictureBtn;
     Button calculateSumBtn;
     Button loadImgBtn;
@@ -74,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         takePictureBtn = findViewById(R.id.takePictureButton);
         calculateSumBtn = findViewById(R.id.calculateSum);
         loadImgBtn = findViewById(R.id.loadImgButton);
@@ -83,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
         threshSeek = findViewById(R.id.threshSeekBar);
         distText = findViewById(R.id.distTextView);
         distSeek = findViewById(R.id.distSeekBar);
+
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        viewModel.init();
+
 
         //TODO remove
 //        processedBm = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
@@ -242,42 +252,23 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO Need to make this work with the gallery
     public void loadImage(View view) {
-        imgView.setVisibility(View.INVISIBLE);
-
-
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if(PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
+                "Read external storage permission needed", PERMISSION_TO_READ_STORAGE)) {
+            imgView.setVisibility(View.INVISIBLE);
 //            getCircles(BitmapFactory.decodeFile(currentPhotoPath));
-          BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
+            BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
             threshSeek.setVisibility(View.VISIBLE);
             threshText.setVisibility(View.VISIBLE);
-
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
-
-            }
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSION_TO_READ_STORAGE);
         }
-
     }
 
     public void openCamera(View view) {
-        imgView.setVisibility(View.INVISIBLE);
-
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if(PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)){
+            imgView.setVisibility(View.INVISIBLE);
             dispatchTakePictureIntent();
             threshSeek.setVisibility(View.VISIBLE);
             threshText.setVisibility(View.VISIBLE);
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(this, "Camera permission needed", Toast.LENGTH_LONG).show();
-
-            }
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSION_TO_WRITE_STORAGE);
         }
     }
 
@@ -334,14 +325,11 @@ public class MainActivity extends AppCompatActivity {
             case PERMISSION_TO_WRITE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    imgView.setVisibility(View.INVISIBLE);
                     dispatchTakePictureIntent();
                     threshSeek.setVisibility(View.VISIBLE);
                     threshText.setVisibility(View.VISIBLE);
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
                 }
                 return;
@@ -349,21 +337,14 @@ public class MainActivity extends AppCompatActivity {
 
             case PERMISSION_TO_READ_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
                     threshSeek.setVisibility(View.VISIBLE);
                     threshText.setVisibility(View.VISIBLE);
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 
