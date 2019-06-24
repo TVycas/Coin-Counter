@@ -13,13 +13,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:src="@android:color/black"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/takePictureButton"
@@ -61,6 +59,7 @@
         android:layout_marginStart="120dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="28dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/threshSeekBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -69,10 +68,11 @@
     <SeekBar
         android:id="@+id/threshSeekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="259dp"
+        android:layout_width="267dp"
         android:layout_height="30dp"
         android:layout_marginStart="76dp"
         android:layout_marginBottom="16dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/distTextView"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -80,10 +80,11 @@
         android:id="@+id/distSeekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="267dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/photoButton"
+        android:layout_height="30dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginBottom="28dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/calculateSum"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -92,6 +93,7 @@
         android:layout_height="25dp"
         android:layout_marginStart="124dp"
         android:layout_marginBottom="20dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/distSeekBar"
         app:layout_constraintStart_toStartOf="parent" />
 

@@ -19,8 +19,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.examples.classification.env.Logger;
-import org.tensorflow.lite.gpu.GpuDelegate;
+//import org.tensorflow.lite.examples.classification.env.Logger;
+//import org.tensorflow.lite.gpu.GpuDelegate;
 
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class Classifier {
@@ -53,7 +53,7 @@ public abstract class Classifier {
   private List<String> labels;
 
   /** Optional GPU delegate for accleration. */
-  private GpuDelegate gpuDelegate = null;
+//  private GpuDelegate gpuDelegate = null;
 
   /** An instance of the driver class to run model inference with Tensorflow Lite. */
   protected Interpreter tflite;
@@ -68,10 +68,10 @@ public abstract class Classifier {
    * @param numThreads The number of threads to use for classification.
    * @return A classifier with the desired configuration.
    */
-  public static Classifier create(Device device, int numThreads)
-      throws IOException {
-      return new ClassifierFloatMobileNet(device, numThreads);
-  }
+//  public static Classifier create(Device device, int numThreads)
+//      throws IOException {
+////      return new ClassifierFloatMobileNet(device, numThreads);
+//  }
 
   /** An immutable result returned by a Classifier describing what was recognized. */
   public static class Recognition {
@@ -151,8 +151,8 @@ public abstract class Classifier {
         tfliteOptions.setUseNNAPI(true);
         break;
       case GPU:
-        gpuDelegate = new GpuDelegate();
-        tfliteOptions.addDelegate(gpuDelegate);
+//        gpuDelegate = new GpuDelegate();
+//        tfliteOptions.addDelegate(gpuDelegate);
         break;
       case CPU:
         break;
@@ -168,7 +168,7 @@ public abstract class Classifier {
                 * DIM_PIXEL_SIZE
                 * getNumBytesPerChannel());
     imgData.order(ByteOrder.nativeOrder());
-    LOGGER.d("Created a Tensorflow Lite Image Classifier.");
+//    LOGGER.d("Created a Tensorflow Lite Image Classifier.");
   }
 
   /** Reads label list from Assets. */
@@ -211,7 +211,7 @@ public abstract class Classifier {
       }
     }
     long endTime = SystemClock.uptimeMillis();
-    LOGGER.v("Timecost to put values into ByteBuffer: " + (endTime - startTime));
+//    LOGGER.v("Timecost to put values into ByteBuffer: " + (endTime - startTime));
   }
 
   /** Runs inference and returns the classification results. */
@@ -229,7 +229,7 @@ public abstract class Classifier {
     runInference();
     long endTime = SystemClock.uptimeMillis();
     Trace.endSection();
-    LOGGER.v("Timecost to run model inference: " + (endTime - startTime));
+//    LOGGER.v("Timecost to run model inference: " + (endTime - startTime));
 
     // Find the best classifications.
     PriorityQueue<Recognition> pq =
@@ -265,10 +265,10 @@ public abstract class Classifier {
       tflite.close();
       tflite = null;
     }
-    if (gpuDelegate != null) {
-      gpuDelegate.close();
-      gpuDelegate = null;
-    }
+//    if (gpuDelegate != null) {
+////      gpuDelegate.close();
+////      gpuDelegate = null;
+//    }
     tfliteModel = null;
   }
 

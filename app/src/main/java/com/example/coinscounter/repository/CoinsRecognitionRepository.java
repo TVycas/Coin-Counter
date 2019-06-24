@@ -59,12 +59,13 @@ public class CoinsRecognitionRepository {
 //                    });
 //            return;
 //        }
-        try {
-            Log.d(TAG, "Creating classifier");
-            classifier = Classifier.create(Device.valueOf("GPU"), 3);
-        } catch (IOException e) {
-            Log.e(String.valueOf(e), "Failed to create classifier.");
-        }
+
+//        try {
+//            Log.d(TAG, "Creating classifier");
+//            classifier = Classifier.create(Device.valueOf("GPU"), 3);
+//        } catch (IOException e) {
+//            Log.e(String.valueOf(e), "Failed to create classifier.");
+//        }
     }
 
 
