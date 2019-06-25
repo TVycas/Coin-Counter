@@ -1,7 +1,11 @@
 package com.example.coinscounter.tflite;
 
 import android.app.Activity;
+
+import com.example.coinscounter.repository.CoinsRecognitionRepository;
+
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
 
 /** This TensorFlowLite classifier works with the float MobileNet model. */
 public class ClassifierFloatMobileNet extends Classifier {
@@ -19,22 +23,22 @@ public class ClassifierFloatMobileNet extends Classifier {
   /**
    * Initializes a {@code ClassifierFloatMobileNet}.
    *
-   * @param activity
    */
-  public ClassifierFloatMobileNet(Activity activity, Device device, int numThreads)
+  public ClassifierFloatMobileNet(MappedByteBuffer modelFile, Device device, int numThreads)
       throws IOException {
-    super(activity, device, numThreads);
+    super(modelFile, device, numThreads);
     labelProbArray = new float[1][getNumLabels()];
+
   }
 
   @Override
   public int getImageSizeX() {
-    return 224;
+    return 75;
   }
 
   @Override
   public int getImageSizeY() {
-    return 224;
+    return 75;
   }
 
   @Override
@@ -54,9 +58,9 @@ public class ClassifierFloatMobileNet extends Classifier {
 
   @Override
   protected void addPixelValue(int pixelValue) {
-    imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-    imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-    imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+    imgData.putFloat(((pixelValue >> 16) & 0xFF) / 255.f);
+    imgData.putFloat(((pixelValue >> 8) & 0xFF) / 255.f);
+    imgData.putFloat((pixelValue & 0xFF) / 255.f);
   }
 
   @Override

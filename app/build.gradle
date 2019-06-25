@@ -22,6 +22,10 @@ android {
         }
     }
 
+    aaptOptions {
+        noCompress "tflite"
+    }
+
     sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
     externalNativeBuild {
         ndkBuild {
@@ -50,7 +54,7 @@ dependencies {
 
     //TensorFLow lite
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
-
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
 
     implementation project(':openCV')
 }

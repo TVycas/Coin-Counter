@@ -4,8 +4,14 @@ import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
+import android.nfc.Tag;
 import android.os.SystemClock;
 import android.os.Trace;
+import android.util.Log;
+
+import com.example.coinscounter.EuroCoins;
+import com.example.coinscounter.repository.CoinsRecognitionRepository;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,11 +25,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import org.tensorflow.lite.Interpreter;
-//import org.tensorflow.lite.examples.classification.env.Logger;
-//import org.tensorflow.lite.gpu.GpuDelegate;
+import org.tensorflow.lite.gpu.GpuDelegate;
 
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class Classifier {
+
+  static final String TAG = "Classifier";
 
   /** The runtime device type used for executing classification. */
   public enum Device {
@@ -53,7 +60,7 @@ public abstract class Classifier {
   private List<String> labels;
 
   /** Optional GPU delegate for accleration. */
-//  private GpuDelegate gpuDelegate = null;
+  private GpuDelegate gpuDelegate = null;
 
   /** An instance of the driver class to run model inference with Tensorflow Lite. */
   protected Interpreter tflite;
@@ -68,10 +75,10 @@ public abstract class Classifier {
    * @param numThreads The number of threads to use for classification.
    * @return A classifier with the desired configuration.
    */
-//  public static Classifier create(Device device, int numThreads)
-//      throws IOException {
-////      return new ClassifierFloatMobileNet(device, numThreads);
-//  }
+  public static Classifier create(MappedByteBuffer modelFile, Device device, int numThreads)
+      throws IOException {
+      return new ClassifierFloatMobileNet(modelFile, device, numThreads);
+  }
 
   /** An immutable result returned by a Classifier describing what was recognized. */
   public static class Recognition {
@@ -144,22 +151,23 @@ public abstract class Classifier {
   }
 
   /** Initializes a {@code Classifier}. */
-  protected Classifier(Activity activity, Device device, int numThreads) throws IOException {
-    tfliteModel = loadModelFile(activity);
+  protected Classifier(MappedByteBuffer modelFile, Device device, int numThreads) throws IOException {
+    tfliteModel = modelFile;
     switch (device) {
       case NNAPI:
         tfliteOptions.setUseNNAPI(true);
         break;
       case GPU:
-//        gpuDelegate = new GpuDelegate();
-//        tfliteOptions.addDelegate(gpuDelegate);
+        Log.d(TAG, "Case GPU");
+        gpuDelegate = new GpuDelegate();
+        tfliteOptions.addDelegate(gpuDelegate);
         break;
       case CPU:
         break;
     }
     tfliteOptions.setNumThreads(numThreads);
     tflite = new Interpreter(tfliteModel, tfliteOptions);
-    labels = loadLabelList(activity);
+    labels = EuroCoins.getValuesList();
     imgData =
         ByteBuffer.allocateDirect(
             DIM_BATCH_SIZE
@@ -168,31 +176,21 @@ public abstract class Classifier {
                 * DIM_PIXEL_SIZE
                 * getNumBytesPerChannel());
     imgData.order(ByteOrder.nativeOrder());
-//    LOGGER.d("Created a Tensorflow Lite Image Classifier.");
+    Log.d(TAG, "Created a Tensorflow Lite Image Classifier.");
   }
 
-  /** Reads label list from Assets. */
-  private List<String> loadLabelList(Activity activity) throws IOException {
-    List<String> labels = new ArrayList<String>();
-    BufferedReader reader =
-        new BufferedReader(new InputStreamReader(activity.getAssets().open(getLabelPath())));
-    String line;
-    while ((line = reader.readLine()) != null) {
-      labels.add(line);
-    }
-    reader.close();
-    return labels;
-  }
-
-  /** Memory-map the model file in Assets. */
-  private MappedByteBuffer loadModelFile(Activity activity) throws IOException {
-    AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(getModelPath());
-    FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-    FileChannel fileChannel = inputStream.getChannel();
-    long startOffset = fileDescriptor.getStartOffset();
-    long declaredLength = fileDescriptor.getDeclaredLength();
-    return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-  }
+//  /** Reads label list from Assets. */
+//  private List<String> loadLabelList(Activity activity) throws IOException {
+//    List<String> labels = new ArrayList<String>();
+//    BufferedReader reader =
+//        new BufferedReader(new InputStreamReader(activity.getAssets().open(getLabelPath())));
+//    String line;
+//    while ((line = reader.readLine()) != null) {
+//      labels.add(line);
+//    }
+//    reader.close();
+//    return labels;
+//  }
 
   /** Writes Image data into a {@code ByteBuffer}. */
   private void convertBitmapToByteBuffer(Bitmap bitmap) {
@@ -211,7 +209,7 @@ public abstract class Classifier {
       }
     }
     long endTime = SystemClock.uptimeMillis();
-//    LOGGER.v("Timecost to put values into ByteBuffer: " + (endTime - startTime));
+    Log.v(TAG, "Timecost to put values into ByteBuffer: " + (endTime - startTime));
   }
 
   /** Runs inference and returns the classification results. */
@@ -229,12 +227,12 @@ public abstract class Classifier {
     runInference();
     long endTime = SystemClock.uptimeMillis();
     Trace.endSection();
-//    LOGGER.v("Timecost to run model inference: " + (endTime - startTime));
+    Log.v(TAG, "Timecost to run model inference: " + (endTime - startTime));
 
     // Find the best classifications.
     PriorityQueue<Recognition> pq =
         new PriorityQueue<Recognition>(
-            3,
+            8,
             new Comparator<Recognition>() {
               @Override
               public int compare(Recognition lhs, Recognition rhs) {
@@ -265,10 +263,10 @@ public abstract class Classifier {
       tflite.close();
       tflite = null;
     }
-//    if (gpuDelegate != null) {
-////      gpuDelegate.close();
-////      gpuDelegate = null;
-//    }
+    if (gpuDelegate != null) {
+      gpuDelegate.close();
+      gpuDelegate = null;
+    }
     tfliteModel = null;
   }
 

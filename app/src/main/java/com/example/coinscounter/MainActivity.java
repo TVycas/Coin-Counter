@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         distSeek = findViewById(R.id.distSeekBar);
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        viewModel.init();
+        viewModel.init(this);
 
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
 //            if(processedBitmap != null) {
@@ -157,13 +157,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-    private void showMat(Mat mat){
-        //TODO remove this
-        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(mat, resultBitmap);
-        imgView.setImageBitmap(resultBitmap);
-    }
+//
+//    private void showMat(Mat mat){
+//        //TODO remove this
+//        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+//        Utils.matToBitmap(mat, resultBitmap);
+//        imgView.setImageBitmap(resultBitmap);
+//    }
 
 //    private void selectCoinOnLocation(int x, int y){
 //        //TODO get rid of this
@@ -346,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calculateSum(View view) {
+        viewModel.calculateSum();
         Toast.makeText(this, "Not implemented!", Toast.LENGTH_SHORT).show();
     }
 }

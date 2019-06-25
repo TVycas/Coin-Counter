@@ -1,5 +1,6 @@
 package com.example.coinscounter.viewmodel;
 
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
@@ -8,8 +9,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.coinscounter.MainActivity;
 import com.example.coinscounter.repository.CoinsRecognitionRepository;
 import com.example.coinscounter.tflite.Classifier;
+import com.example.coinscounter.tflite.ClassifierFloatMobileNet;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -17,28 +20,42 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivityViewModel extends ViewModel {
     static final String TAG = "MainActivityViewModel";
     private CoinsRecognitionRepository repo;
     private MutableLiveData<Classifier> coinsRecognitionModel;
-    private String photoPath;
     private MutableLiveData<Bitmap> processedBitmap = new MutableLiveData<>();
+    private List<Bitmap> croppedPhotosList = new LinkedList<>();
+    private String photoPath;
     private Mat circles;
     private Mat processedMat;
 
-    public void init(){
+    public void init(MainActivity activity){
         if(coinsRecognitionModel != null){
             return;
         }
         repo = CoinsRecognitionRepository.getInstance();
-        coinsRecognitionModel = repo.getClassifier();
+
+        try {
+            coinsRecognitionModel = repo.getClassifier(loadModelFile(activity));
+            Log.d(TAG, "ML model created");
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
+
 
     public void setProcessedMat(Mat mat){
         processedMat = mat;
+        Log.d(TAG, "The mat is set");
     }
 
     public void setImagePath(String currentPhotoPath) {
@@ -95,6 +112,9 @@ public class MainActivityViewModel extends ViewModel {
             Bitmap croppedCoin = Bitmap.createBitmap(croppedMat.cols(), croppedMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedMat, croppedCoin);
 
+            //Save the bitmap to the list for the ML model
+            croppedPhotosList.add(croppedCoin);
+
             //Save the cropped coin bitmap to disk
             File file = new File(dir, "CroppedCoin_" + System.currentTimeMillis() + ".png");
             fOut = new FileOutputStream(file);
@@ -110,4 +130,29 @@ public class MainActivityViewModel extends ViewModel {
         Log.d(TAG, "number of saved coins = " + savedCoinsCount);
     }
 
+    private MappedByteBuffer loadModelFile(MainActivity activity) throws IOException {
+            AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(repo.getModelPath());
+            FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+            FileChannel fileChannel = inputStream.getChannel();
+            long startOffset = fileDescriptor.getStartOffset();
+            long declaredLength = fileDescriptor.getDeclaredLength();
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+
+    public void calculateSum() {
+        //Save the coins that we're processing for the future
+        try{
+            saveCoins();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        for (Bitmap coin : croppedPhotosList) {
+            final List<Classifier.Recognition> results = coinsRecognitionModel.getValue().recognizeImage(Bitmap.createScaledBitmap(coin, 75, 75, false));
+            Log.i(TAG, "Recognition values: ");
+            for (Classifier.Recognition rec : results) {
+                Log.i(TAG, rec.getTitle() + "  -  " + rec.getConfidence());
+            }
+        }
+    }
 }

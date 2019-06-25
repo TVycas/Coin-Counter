@@ -1,5 +1,6 @@
 package com.example.coinscounter.repository;
 
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -7,7 +8,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.coinscounter.tflite.Classifier;
 import com.example.coinscounter.tflite.Classifier.Device;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.MappedByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Singleton pattern
@@ -24,13 +30,17 @@ public class CoinsRecognitionRepository {
         return instance;
     }
 
-    public MutableLiveData<Classifier> getClassifier(){
-        configureClassifier();
+    public String getModelPath() {
+        return "firstModel.tflite";
+    }
+
+    public MutableLiveData<Classifier> getClassifier(MappedByteBuffer modelFile){
+        configureClassifier(modelFile);
         MutableLiveData<Classifier> data = new MutableLiveData<>();
         data.setValue(classifier);
         return data;
     }
-        //todo?
+    //todo?
 //    @Override
 //    protected void onInferenceConfigurationChanged() {
 //        if (croppedBitmap == null) {
@@ -41,9 +51,10 @@ public class CoinsRecognitionRepository {
 //        final Classifier.Model model = getModel();
 //        final int numThreads = getNumThreads();
 //        runInBackground(() -> recreateClassifier(model, device, numThreads));
+
 //    }
 
-    private void configureClassifier() {
+    private void configureClassifier(MappedByteBuffer modelFile) {
         if (classifier != null) {
             Log.d(TAG, "Closing classifier.");
             classifier.close();
@@ -60,13 +71,11 @@ public class CoinsRecognitionRepository {
 //            return;
 //        }
 
-//        try {
-//            Log.d(TAG, "Creating classifier");
-//            classifier = Classifier.create(Device.valueOf("GPU"), 3);
-//        } catch (IOException e) {
-//            Log.e(String.valueOf(e), "Failed to create classifier.");
-//        }
+        try {
+            Log.d(TAG, "Creating classifier");
+            classifier = Classifier.create(modelFile, Device.valueOf("CPU"), 4);
+        } catch (IOException e) {
+            Log.e(String.valueOf(e), "Failed to create classifier.");
+        }
     }
-
-
 }

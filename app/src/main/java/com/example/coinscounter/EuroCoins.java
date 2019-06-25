@@ -1,7 +1,9 @@
 package com.example.coinscounter;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public final class EuroCoins {
     //euro-cents
@@ -28,4 +30,18 @@ public final class EuroCoins {
         put(2f, e2);
     }};
 
+    private static LinkedList<String> valuesList = new LinkedList<String>(Arrays.asList(
+            "cent1",
+            "cent2",
+            "cent5",
+            "cent10",
+            "cent20",
+            "cent50",
+            "euro1",
+            "euro2"
+            ));
+
+    public static LinkedList<String> getValuesList(){
+        return valuesList;
+    }
 }
