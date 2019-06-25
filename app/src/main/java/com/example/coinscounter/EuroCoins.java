@@ -19,15 +19,15 @@ public final class EuroCoins {
     private static final float e2 = 25.75f;
 
     //sorted by value TODO This maybe needs to be automated
-    public static final LinkedHashMap<Float, Float> valueMap = new LinkedHashMap<Float, Float>() {{
-        put(0.01f, c01);
-        put(0.02f, c02);
-        put(0.1f, c10);
-        put(0.05f, c05);
-        put(0.2f, c20);
-        put(1f, e1);
-        put(0.5f, c50);
-        put(2f, e2);
+    public static final LinkedHashMap<String, Float> valueMap = new LinkedHashMap<String, Float>() {{
+        put("cent1", 0.01f);
+        put("cent2", 0.02f);
+        put("cent5", 0.05f);
+        put("cent10", 0.1f);
+        put("cent20", 0.2f);
+        put("cent50", 0.5f);
+        put("euro1", 1f);
+        put("euro2", 2f);
     }};
 
     private static LinkedList<String> valuesList = new LinkedList<String>(Arrays.asList(

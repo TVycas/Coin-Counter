@@ -40,7 +40,7 @@ public abstract class Classifier {
   }
 
   /** Number of results to show in the UI. */
-  private static final int MAX_RESULTS = 3;
+  private static final int MAX_RESULTS = 1;
 
   /** Dimensions of inputs. */
   private static final int DIM_BATCH_SIZE = 1;
@@ -232,7 +232,7 @@ public abstract class Classifier {
     // Find the best classifications.
     PriorityQueue<Recognition> pq =
         new PriorityQueue<Recognition>(
-            8,
+            1,
             new Comparator<Recognition>() {
               @Override
               public int compare(Recognition lhs, Recognition rhs) {

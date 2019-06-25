@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.coinscounter.EuroCoins;
 import com.example.coinscounter.MainActivity;
 import com.example.coinscounter.repository.CoinsRecognitionRepository;
 import com.example.coinscounter.tflite.Classifier;
@@ -25,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class MainActivityViewModel extends ViewModel {
     private String photoPath;
     private Mat circles;
     private Mat processedMat;
+    private float sum;
 
     public void init(MainActivity activity){
         if(coinsRecognitionModel != null){
@@ -147,12 +150,19 @@ public class MainActivityViewModel extends ViewModel {
             e.printStackTrace();
         }
 
+        sum = 0;
+        List<Classifier.Recognition> results = new ArrayList<>();
+
         for (Bitmap coin : croppedPhotosList) {
-            final List<Classifier.Recognition> results = coinsRecognitionModel.getValue().recognizeImage(Bitmap.createScaledBitmap(coin, 75, 75, false));
-            Log.i(TAG, "Recognition values: ");
-            for (Classifier.Recognition rec : results) {
-                Log.i(TAG, rec.getTitle() + "  -  " + rec.getConfidence());
-            }
+            results.add((coinsRecognitionModel.getValue().recognizeImage(Bitmap.createScaledBitmap(coin, 75, 75, false))).get(0));
         }
+
+        Log.i(TAG, "Recognition values: ");
+        for (Classifier.Recognition rec : results) {
+            Log.i(TAG, rec.getTitle() + "  -  " + rec.getConfidence());
+            sum += EuroCoins.valueMap.get(rec.getTitle());
+        }
+
+        Log.i(TAG, "Sum = " + sum);
     }
 }

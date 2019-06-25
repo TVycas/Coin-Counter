@@ -347,6 +347,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculateSum(View view) {
         viewModel.calculateSum();
-        Toast.makeText(this, "Not implemented!", Toast.LENGTH_SHORT).show();
     }
 }
