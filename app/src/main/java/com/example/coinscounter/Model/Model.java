@@ -65,9 +65,6 @@ public class Model {
     }
 
     public MutableLiveData<Bitmap> getProcessedBitmap() {
-//        MutableLiveData<Bitmap> data = new MutableLiveData<>();
-//        data.setValue(processedBitmap);
-//        return data;
         return processedBitmap;
     }
 
@@ -187,7 +184,7 @@ public class Model {
 
             addResultsItems();
 
-            Log.i(TAG, "Sum = " + sum);
+            Log.i(TAG, "Sum = " + sum.getValue());
 
             return true;
         } else {
@@ -200,6 +197,8 @@ public class Model {
         for (CoinCardItem rec : results.getValue()) {
             Log.i(TAG, rec.getName());
             sum.setValue(sum.getValue() + rec.getValue());
+            Log.i(TAG, sum.getValue().toString());
         }
+        sum.setValue(sum.getValue());
     }
 }

@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
-
-            Toast.makeText(this, "onChanged", Toast.LENGTH_LONG).show();
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
         });
@@ -96,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2)); // kaip paimti is folderio
                 viewModel.setThreshSeekProgress(threshSeek.getProgress());
                 viewModel.getCircles();
             }

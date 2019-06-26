@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coinscounter.utills.CoinCardAdapter;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class ResultsActivity extends AppCompatActivity {
 
     public static final String TAG = "ResultsActivity";
@@ -38,7 +41,11 @@ public class ResultsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         viewModel.getCardList().observe(this, (cardList) -> adapter.setCoins(cardList));
-        viewModel.getSum().observe(this, (sum) -> sumTextView.setText(sum.toString()));
+        viewModel.getSum().observe(this, (sum) -> {
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            sumTextView.setText(df.format(sum));
+        });
     }
 
 
