@@ -1,6 +1,5 @@
 package com.example.coinscounter.repository;
 
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -8,24 +7,20 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.coinscounter.tflite.Classifier;
 import com.example.coinscounter.tflite.Classifier.Device;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Singleton pattern
  */
-public class CoinsRecognitionRepository {
-    private static final String TAG = "CoinsRecognitionRepository";
-    private static CoinsRecognitionRepository instance;
+public class Repository {
+    private static final String TAG = "Repository";
+    private static Repository instance;
     private Classifier classifier;
 
-    public static CoinsRecognitionRepository getInstance(){
+    public static Repository getInstance(){
         if(instance == null){
-            instance = new CoinsRecognitionRepository();
+            instance = new Repository();
         }
         return instance;
     }
@@ -60,17 +55,6 @@ public class CoinsRecognitionRepository {
             classifier.close();
             classifier = null;
         }
-        //TODO
-//        if (device == Device.GPU && model == Model.QUANTIZED) {
-//            Log.d("Not creating classifier: GPU doesn't support quantized models.");
-//            runOnUiThread(
-//                    () -> {
-//                        Toast.makeText(this, "GPU does not yet supported quantized models.", Toast.LENGTH_LONG)
-//                                .show();
-//                    });
-//            return;
-//        }
-
         try {
             Log.d(TAG, "Creating classifier");
             classifier = Classifier.create(modelFile, Device.valueOf("CPU"), 4);

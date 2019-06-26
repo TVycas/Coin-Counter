@@ -1,31 +1,24 @@
 package com.example.coinscounter.tflite;
 
-import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
-import android.nfc.Tag;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Log;
 
 import com.example.coinscounter.EuroCoins;
-import com.example.coinscounter.repository.CoinsRecognitionRepository;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import org.tensorflow.lite.Interpreter;
+import org.tensorflow.lite.gpu.GpuDelegate;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
-import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.gpu.GpuDelegate;
 
 /** A classifier specialized to label images using TensorFlow Lite. */
 public abstract class Classifier {

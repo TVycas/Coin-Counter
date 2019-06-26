@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +25,6 @@ import com.example.coinscounter.utills.PermissionManager;
 import com.example.coinscounter.viewmodel.MainActivityViewModel;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,17 +65,13 @@ public class MainActivity extends AppCompatActivity {
         distSeek = findViewById(R.id.distSeekBar);
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        viewModel.init(this);
-
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
 //            if(processedBitmap != null) {
-                imgView.setImageBitmap(processedBitmap);
-                imgView.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "onChanged", Toast.LENGTH_LONG).show();
+            imgView.setImageBitmap(processedBitmap);
+            imgView.setVisibility(View.VISIBLE);
 //            }
         });
-
-        //TODO remove
-//        processedBm = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
 
         imgView.getLocationOnScreen(viewCoords);
 
@@ -104,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //TODO maybe add functionality to upload a picture
 //                getCircles(BitmapFactory.decodeResource(getResources(), R.drawable.coins2)); // kaip paimti is folderio
-                getCircles(BitmapFactory.decodeFile(viewModel.getPhotoPath()));
+                viewModel.setThreshSeekProgress(threshSeek.getProgress());
+                viewModel.getCircles();
             }
         });
 
@@ -123,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //TODO maybe add functionality to upload a picture
-                getCircles(BitmapFactory.decodeFile(viewModel.getPhotoPath()));
+                viewModel.setDistSeekProgress(distSeek.getProgress());
+                viewModel.getCircles();
             }
         });
 //
@@ -154,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
 //        }
     }
-
 
 
 //
@@ -229,8 +221,9 @@ public class MainActivity extends AppCompatActivity {
 //        return 1f;
 //    }
 
+    //TODO marge these two methods
     //TODO make this work with gallery
-    private void setUpLoadingImage(){
+    private void setUpLoadingImage() {
         imgView.setVisibility(View.INVISIBLE);
 
         imgView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
@@ -243,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         distText.setText("MinDist:" + distSeek.getProgress());
     }
 
-    private void setUpTakingPicture(){
+    private void setUpTakingPicture() {
         imgView.setVisibility(View.INVISIBLE);
 
         dispatchTakePictureIntent();
@@ -256,20 +249,16 @@ public class MainActivity extends AppCompatActivity {
         distText.setText("MinDist:" + distSeek.getProgress());
     }
 
-    private void getCircles(Bitmap bm) {
-        new ImageProcessing(this, viewModel,700, threshSeek.getProgress(), distSeek.getProgress()).execute(bm);
-    }
-
     public void loadImage(View view) {
-        if(PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
+        if (PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
                 "Read external storage permission needed", PERMISSION_TO_READ_STORAGE)) {
             setUpLoadingImage();
         }
     }
 
     public void openCamera(View view) {
-        if(PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)){
+        if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
             setUpTakingPicture();
         }
     }
@@ -339,13 +328,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            getCircles(BitmapFactory.decodeFile(viewModel.getPhotoPath()));
+            viewModel.setThreshSeekProgress(threshSeek.getProgress());
+            viewModel.setDistSeekProgress(distSeek.getProgress());
+            viewModel.getCircles();
         } else {
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void calculateSum(View view) {
-        viewModel.calculateSum();
+        if (viewModel.calculateSum()) {
+            Intent intent = new Intent(this, ResultsActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "No coins selected", Toast.LENGTH_LONG).show();
+        }
     }
 }

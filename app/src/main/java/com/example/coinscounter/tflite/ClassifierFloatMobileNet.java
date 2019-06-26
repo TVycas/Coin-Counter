@@ -1,9 +1,5 @@
 package com.example.coinscounter.tflite;
 
-import android.app.Activity;
-
-import com.example.coinscounter.repository.CoinsRecognitionRepository;
-
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 

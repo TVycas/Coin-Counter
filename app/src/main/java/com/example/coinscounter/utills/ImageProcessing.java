@@ -1,10 +1,10 @@
-package com.example.coinscounter;
+package com.example.coinscounter.utills;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.coinscounter.viewmodel.MainActivityViewModel;
+import com.example.coinscounter.Model.Model;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -13,29 +13,25 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.lang.ref.WeakReference;
-
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughCircles;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
-class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
+public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
     private static final String TAG = "ImageProcessing";
     private final int imageWidth;
     private final int lowerThreshold;
     private final int dist;
-    private WeakReference<MainActivity> activityWeakReference;
     private Mat circles;
-    private MainActivityViewModel activityViewModel;
+    private Model model;
 
 
-    ImageProcessing(MainActivity activity, MainActivityViewModel activityViewModel, int imageWidth, int lowerThreshold, int dist) {
-        activityWeakReference = new WeakReference<>(activity);
+    public ImageProcessing(Model model, int imageWidth, int lowerThreshold, int dist) {
         circles = new Mat();
 
-        this.activityViewModel = activityViewModel;
+        this.model = model;
         this.imageWidth = imageWidth;
         this.lowerThreshold = lowerThreshold;
         this.dist = dist;
@@ -88,7 +84,7 @@ class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         //TODO this whole check the referece thing maybe could be moved to a method cause it's done a few times
 
 
-        activityViewModel.setProcessedMat(src);
+        model.setProcessedMat(src);
 
 
         for (int i = 0; i < circles.cols(); i++) {
@@ -121,34 +117,11 @@ class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
     }
 
 
-//    //TODO maybe I don't need these updates because they never have time to show up
-//    @Override
-//    protected void onProgressUpdate(String... values) {
-//        super.onProgressUpdate(values);
-//
-//        MainActivity activity = activityWeakReference.get();
-//        if (activity == null || activity.isFinishing()) {
-//            return;
-//        }
-//
-//        activity.threshText.setText(values[0]);
-//    }
-
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
 
-        MainActivity activity = activityWeakReference.get();
-        if (activity == null || activity.isFinishing()) {
-            return;
-        }
-
-//            activity.imgView.setImageBitmap(bitmap);
-//            activity.imgView.setVisibility(View.VISIBLE);
-
-//            activity.threshText.setText("Threshold: " + lowerThreshold);
-
-        activityViewModel.setProcessedBitmap(bitmap);
-        activityViewModel.setCircles(circles);
+        model.setProcessedBitmap(bitmap);
+        model.setCircles(circles);
     }
 }
