@@ -17,9 +17,10 @@ import java.util.List;
 public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCardViewHolder> {
 
     private ArrayList<CoinCardItem> coinCardList = new ArrayList<>();
+    private onItemClickListener listener;
 
 
-    public static class CoinCardViewHolder extends RecyclerView.ViewHolder{
+    public class CoinCardViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageView;
         public TextView textView;
 
@@ -27,6 +28,17 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
             super(itemView);
             imageView = itemView.findViewById(R.id.coinImage);
             textView = itemView.findViewById(R.id.coinTextView);
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(coinCardList.get(position));
+                    }
+                }
+            });
         }
     }
 
@@ -54,5 +66,13 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
     public void setCoins(List<CoinCardItem> coinCards){
         this.coinCardList = (ArrayList<CoinCardItem>) coinCards;
         notifyDataSetChanged();
+    }
+
+    public interface onItemClickListener{
+        void onItemClick(CoinCardItem coinCardItem);
+    }
+
+    public void setOnItemClickListener(onItemClickListener listener){
+        this.listener = listener;
     }
 }

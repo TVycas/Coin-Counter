@@ -1,4 +1,4 @@
-package com.example.coinscounter;
+package com.example.coinscounter.utills;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;

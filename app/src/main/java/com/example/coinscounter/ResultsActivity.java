@@ -1,5 +1,6 @@
 package com.example.coinscounter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coinscounter.utills.CoinCardAdapter;
+import com.example.coinscounter.utills.CoinCardItem;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
 import java.math.RoundingMode;
@@ -46,7 +48,13 @@ public class ResultsActivity extends AppCompatActivity {
             df.setRoundingMode(RoundingMode.HALF_UP);
             sumTextView.setText(df.format(sum));
         });
+
+        adapter.setOnItemClickListener(new CoinCardAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(CoinCardItem coinCardItem) {
+                Intent intent = new Intent(ResultsActivity.this, UpdateCoinValueActivity.class);
+                startActivity(intent);
+            }
+        });
     }
-
-
 }

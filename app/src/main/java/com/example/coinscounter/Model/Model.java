@@ -8,7 +8,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.coinscounter.EuroCoins;
+import com.example.coinscounter.utills.EuroCoins;
 import com.example.coinscounter.repository.Repository;
 import com.example.coinscounter.tflite.Classifier;
 import com.example.coinscounter.utills.CoinCardItem;

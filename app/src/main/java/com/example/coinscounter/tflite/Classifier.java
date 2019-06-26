@@ -6,7 +6,7 @@ import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Log;
 
-import com.example.coinscounter.EuroCoins;
+import com.example.coinscounter.utills.EuroCoins;
 
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.gpu.GpuDelegate;
