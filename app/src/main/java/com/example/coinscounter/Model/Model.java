@@ -32,46 +32,43 @@ public class Model {
     private static Model instance;
     private Repository repo;
     private MutableLiveData<Classifier> classifier;
-    private ArrayList<CoinCardItem> results = new ArrayList<>();
-    private Float sum;
+    private MutableLiveData<ArrayList<CoinCardItem>> results = new MutableLiveData<>();
+    private MutableLiveData<Bitmap> processedBitmap = new MutableLiveData<>();
+    private MutableLiveData<Float> sum = new MutableLiveData<>();
     private List<Bitmap> croppedPhotosList = new ArrayList<>();
     private String photoPath;
     private Mat circles;
     private Mat processedMat;
-    private Bitmap processedBitmap;
 
-    public static Model getInstance(Application application){
-        if(instance == null){
+    public static Model getInstance(Application application) {
+        if (instance == null) {
             instance = new Model(application);
         }
         return instance;
     }
 
-    private Model(Application application){
+    private Model(Application application) {
         repo = Repository.getInstance();
-        try{
+        try {
             classifier = repo.getClassifier(loadModelFile(application));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public MutableLiveData<ArrayList<CoinCardItem>> getCardList() {
-        MutableLiveData<ArrayList<CoinCardItem>> data = new MutableLiveData<>();
-        data.setValue(results);
-        return data;
+        return results;
     }
 
-    public MutableLiveData<Float> getSum(){
-        MutableLiveData<Float> data = new MutableLiveData<>();
-        data.setValue(sum);
-        return data;
+    public MutableLiveData<Float> getSum() {
+        return sum;
     }
 
     public MutableLiveData<Bitmap> getProcessedBitmap() {
-        MutableLiveData<Bitmap> data = new MutableLiveData<>();
-        data.setValue(processedBitmap);
-        return data;
+//        MutableLiveData<Bitmap> data = new MutableLiveData<>();
+//        data.setValue(processedBitmap);
+//        return data;
+        return processedBitmap;
     }
 
     public void setProcessedMat(Mat mat) {
@@ -79,7 +76,7 @@ public class Model {
     }
 
     public void setProcessedBitmap(Bitmap bitmap) {
-        processedBitmap = bitmap;
+        processedBitmap.setValue(bitmap);
     }
 
 
@@ -163,9 +160,9 @@ public class Model {
 
     public boolean calculateSum() {
         //reset data
-        if(results != null) {
+        if (results.getValue() != null) {
             croppedPhotosList.clear();
-            sum = 0f;
+            sum.setValue(0f);
         }
         if (!circles.empty()) {
             //Save the coins that we're processing for the future
@@ -175,15 +172,15 @@ public class Model {
                 e.printStackTrace();
             }
 
-            results = new ArrayList<>();
-            sum = 0f;
+            results.setValue(new ArrayList<>());
+            sum.setValue(0f);
 
             for (Bitmap coin : croppedPhotosList) {
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 75, 75, false);
                 List<Classifier.Recognition> recognitions = classifier.getValue().recognizeImage(scaledBitmap);
                 Classifier.Recognition rec = recognitions.get(0);
                 Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.valueMap.get(rec.getTitle()));
-                results.add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.valueMap.get(rec.getTitle())));
+                results.getValue().add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.valueMap.get(rec.getTitle())));
             }
 
             Log.i(TAG, "Recognition values: ");
@@ -200,9 +197,9 @@ public class Model {
     }
 
     private void addResultsItems() {
-        for (CoinCardItem rec : results) {
+        for (CoinCardItem rec : results.getValue()) {
             Log.i(TAG, rec.getName());
-            sum += rec.getValue();
+            sum.setValue(sum.getValue() + rec.getValue());
         }
     }
 }

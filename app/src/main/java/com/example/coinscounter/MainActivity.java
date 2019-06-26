@@ -66,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
-//            if(processedBitmap != null) {
+
             Toast.makeText(this, "onChanged", Toast.LENGTH_LONG).show();
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
-//            }
         });
 
         imgView.getLocationOnScreen(viewCoords);
