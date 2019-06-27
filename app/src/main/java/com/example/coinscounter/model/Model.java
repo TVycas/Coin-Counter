@@ -183,8 +183,6 @@ public class Model {
 
             addResultsItems();
 
-            Log.i(TAG, "Sum = " + sum.getValue());
-
             return true;
         } else {
             return false;
@@ -199,6 +197,8 @@ public class Model {
             sum.setValue(sum.getValue() + rec.getValue());
             Log.i(TAG, sum.getValue().toString());
         }
+
+        Log.i(TAG, "Sum = " + sum.getValue());
     }
 
     public void updateCoinCard(int position, float value) {

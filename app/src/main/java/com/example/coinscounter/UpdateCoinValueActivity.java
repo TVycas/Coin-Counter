@@ -75,7 +75,10 @@ public class UpdateCoinValueActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         viewModel.updateCoinValue();
-        Log.d(TAG, "OnDestroy");
         super.onDestroy();
+    }
+
+    public void applyChanges(View view) {
+        finish();
     }
 }

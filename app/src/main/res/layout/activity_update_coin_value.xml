@@ -56,4 +56,15 @@
         android:text="Please use the buttons to set the correct value of the coin"
         android:gravity="center" />
 
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/infoTextView"
+        android:layout_marginTop="15dp"
+        android:text="Apply changes"
+        android:onClick="applyChanges"
+        />
+
 </RelativeLayout>

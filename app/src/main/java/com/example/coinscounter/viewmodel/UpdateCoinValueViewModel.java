@@ -44,7 +44,6 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
 
     public void updateCoinValue() {
         if (!newCoinValue.equals(initCoinValue))
-            Log.d(TAG, "Changing the cardList");
             model.updateCoinCard(coinCardPosition, newCoinValue);
     }
 
