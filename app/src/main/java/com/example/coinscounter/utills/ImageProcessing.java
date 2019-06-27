@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.coinscounter.Model.Model;
+import com.example.coinscounter.model.Model;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;

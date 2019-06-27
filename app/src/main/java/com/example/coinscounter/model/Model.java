@@ -1,4 +1,4 @@
-package com.example.coinscounter.Model;
+package com.example.coinscounter.model;
 
 import android.app.Application;
 import android.content.res.AssetFileDescriptor;
@@ -170,7 +170,6 @@ public class Model {
             }
 
             results.setValue(new ArrayList<>());
-            sum.setValue(0f);
 
             for (Bitmap coin : croppedPhotosList) {
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 75, 75, false);
@@ -194,17 +193,20 @@ public class Model {
     }
 
     private void addResultsItems() {
+        sum.setValue(0f);
         for (CoinCardItem rec : results.getValue()) {
             Log.i(TAG, rec.getName());
             sum.setValue(sum.getValue() + rec.getValue());
             Log.i(TAG, sum.getValue().toString());
         }
-        sum.setValue(sum.getValue());
     }
 
     public void updateCoinCard(int position, float value) {
         CoinCardItem oldItem = results.getValue().get(position);
         CoinCardItem newItem = new CoinCardItem(oldItem.getImageBitmap(), EuroCoins.floatToStringMap.get(value), value);
-        results.getValue().set(position, newItem);
+        ArrayList<CoinCardItem> newCoinList = results.getValue();
+        newCoinList.set(position, newItem);
+        results.setValue(newCoinList);
+        addResultsItems();
     }
 }
