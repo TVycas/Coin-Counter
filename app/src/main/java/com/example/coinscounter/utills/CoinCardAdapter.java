@@ -35,7 +35,7 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(coinCardList.get(position));
+                        listener.onItemClick(position);
                     }
                 }
             });
@@ -69,7 +69,7 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
     }
 
     public interface onItemClickListener{
-        void onItemClick(CoinCardItem coinCardItem);
+        void onItemClick(int coinCardItemPosition);
     }
 
     public void setOnItemClickListener(onItemClickListener listener){

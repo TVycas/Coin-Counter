@@ -43,6 +43,7 @@ public class ResultsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         viewModel.getCardList().observe(this, (cardList) -> adapter.setCoins(cardList));
+
         viewModel.getSum().observe(this, (sum) -> {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_UP);
@@ -51,8 +52,9 @@ public class ResultsActivity extends AppCompatActivity {
 
         adapter.setOnItemClickListener(new CoinCardAdapter.onItemClickListener() {
             @Override
-            public void onItemClick(CoinCardItem coinCardItem) {
+            public void onItemClick(int coinCardItemPosition) {
                 Intent intent = new Intent(ResultsActivity.this, UpdateCoinValueActivity.class);
+                intent.putExtra("CoinCardItemPosition", coinCardItemPosition);
                 startActivity(intent);
             }
         });

@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.UpdateWindow">
+    <style name="AppTheme.UpdateWindow" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>

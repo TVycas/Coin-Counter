@@ -160,7 +160,7 @@ public abstract class Classifier {
     }
     tfliteOptions.setNumThreads(numThreads);
     tflite = new Interpreter(tfliteModel, tfliteOptions);
-    labels = EuroCoins.getValuesList();
+    labels = EuroCoins.stringList;
     imgData =
         ByteBuffer.allocateDirect(
             DIM_BATCH_SIZE

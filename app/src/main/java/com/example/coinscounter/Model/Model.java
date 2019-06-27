@@ -176,8 +176,8 @@ public class Model {
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 75, 75, false);
                 List<Classifier.Recognition> recognitions = classifier.getValue().recognizeImage(scaledBitmap);
                 Classifier.Recognition rec = recognitions.get(0);
-                Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.valueMap.get(rec.getTitle()));
-                results.getValue().add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.valueMap.get(rec.getTitle())));
+                Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.stringToFloatMap.get(rec.getTitle()));
+                results.getValue().add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.stringToFloatMap.get(rec.getTitle())));
             }
 
             Log.i(TAG, "Recognition values: ");
@@ -200,5 +200,11 @@ public class Model {
             Log.i(TAG, sum.getValue().toString());
         }
         sum.setValue(sum.getValue());
+    }
+
+    public void updateCoinCard(int position, float value) {
+        CoinCardItem oldItem = results.getValue().get(position);
+        CoinCardItem newItem = new CoinCardItem(oldItem.getImageBitmap(), EuroCoins.floatToStringMap.get(value), value);
+        results.getValue().set(position, newItem);
     }
 }
