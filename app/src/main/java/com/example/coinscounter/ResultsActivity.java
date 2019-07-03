@@ -47,7 +47,7 @@ public class ResultsActivity extends AppCompatActivity {
         viewModel.getSum().observe(this, (sum) -> {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_UP);
-            sumTextView.setText(df.format(sum));
+            sumTextView.setText(df.format(sum) + " €");
         });
 
         adapter.setOnItemClickListener(new CoinCardAdapter.onItemClickListener() {

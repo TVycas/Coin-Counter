@@ -204,7 +204,9 @@ public class Model {
     public void updateCoinCard(int position, float value) {
         CoinCardItem oldItem = results.getValue().get(position);
         CoinCardItem newItem = new CoinCardItem(oldItem.getImageBitmap(), EuroCoins.floatToStringMap.get(value), value);
+
         ArrayList<CoinCardItem> newCoinList = results.getValue();
+
         newCoinList.set(position, newItem);
         results.setValue(newCoinList);
         addResultsItems();
