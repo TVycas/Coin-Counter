@@ -26,12 +26,13 @@ android {
         noCompress "tflite"
     }
 
-    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
-    externalNativeBuild {
-        ndkBuild {
-            path 'build/intermediates/ndk/debug/Android.mk'
-        }
-    }
+//    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
+//    externalNativeBuild {
+//        ndkBuild {
+//            path 'build/intermediates/ndk/debug/Android.mk'
+//        }
+//    }
+
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
