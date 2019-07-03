@@ -27,11 +27,11 @@ public class MainActivityViewModel extends AndroidViewModel {
         processedBitmap = model.getProcessedBitmap();
     }
 
-    public void setThreshSeekProgress(int threshSeekProgress){
+    public void saveThreshSeekProgress(int threshSeekProgress){
         this.threshSeekProgress = threshSeekProgress;
     }
 
-    public void setDistSeekProgress(int distSeekProgress){
+    public void savetDistSeekProgress(int distSeekProgress){
         this.distSeekProgress = distSeekProgress;
     }
 
@@ -43,7 +43,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         return processedBitmap;
     }
 
-    public void getCircles() {
+    public void findCirclesInImage() {
         new ImageProcessing(model,700, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(model.getPhotoPath()));
     }
 

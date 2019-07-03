@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         distSeek = findViewById(R.id.distSeekBar);
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.setThreshSeekProgress(threshSeek.getProgress());
-                viewModel.getCircles();
+                viewModel.saveThreshSeekProgress(threshSeek.getProgress());
+                viewModel.findCirclesInImage();
             }
         });
 
@@ -112,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.setDistSeekProgress(distSeek.getProgress());
-                viewModel.getCircles();
+                viewModel.savetDistSeekProgress(distSeek.getProgress());
+                viewModel.findCirclesInImage();
             }
         });
 //
@@ -143,106 +144,33 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
 //        }
     }
-
-
-//
-//    private void showMat(Mat mat){
-//        //TODO remove this
-//        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
-//        Utils.matToBitmap(mat, resultBitmap);
-//        imgView.setImageBitmap(resultBitmap);
-//    }
-
-//    private void selectCoinOnLocation(int x, int y){
-//        //TODO get rid of this
-//        float degrees = 90;//rotation degree
-//        Matrix matrix = new Matrix();
-//        matrix.setRotate(degrees);
-//        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
-//        rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
-//
-//        //Bitmap to mat
-//        Mat fullMat = new Mat();
-//        Utils.bitmapToMat(rotatedImage, fullMat);
-//
-//        //Resize the mat to be the same as imageView
-//        Size sz = new Size(imgView.getWidth(),imgView.getHeight());
-//        Imgproc.resize( fullMat, fullMat, sz );
-//
-//        //Turning to grayscale
-//        cvtColor(fullMat, fullMat, COLOR_BGR2GRAY);
-//
-//        //TODO how to determine the kernel size?
-//        blur( fullMat, fullMat, new Size( 40, 40), new Point(-1,-1));
-//
-//        int diameter = findCoinDiameter(x, y, fullMat);
-//
-//        showMat(fullMat);
-//
-////        Rect roi = new Rect(x, y, width, height);
-////        Mat cropped = new Mat(fullMat, roi);
-//
-//    }
-
-    //    private float askCoinWorth(int index){
-//        //TODO remove the 700
-//        Bitmap rotatedImage = BitmapFactory.decodeResource(getResources(), R.drawable.coins2);
-//        int adjustedHeigth = 700 * rotatedImage.getHeight() / rotatedImage.getWidth();
-//        rotatedImage = Bitmap.createScaledBitmap(rotatedImage, 700, adjustedHeigth, true);
-//
-////        //TODO get rid of this
-////        float degrees = 90;//rotation degree
-////        Matrix matrix = new Matrix();
-////        matrix.setRotate(degrees);
-////        rotatedImage = Bitmap.createBitmap(rotatedImage, 0, 0, rotatedImage.getWidth(), rotatedImage.getHeight(), matrix, true);
-//
-//        double[] circle = circles.get(0, index);
-//        Log.d(TAG, "Bitmap: " + rotatedImage.getHeight() + " " + rotatedImage.getWidth());
-//        Log.d(TAG, (float) circle[0] + " " + (float)circle[1] + " " + (float)circle[2]);
-//
-//        Mat mat = new Mat();
-//        Utils.bitmapToMat(rotatedImage, mat);
-//        Imgproc.circle(mat, new Point(circle[0], circle[1]), (int)circle[2], new Scalar(255, 0, 0), 2);
-//        showMat(mat);
-//
-//        //TODO a function to select the amount
-//
-////        Canvas canvas = new Canvas(rotatedImage);
-////        Paint paint = new Paint();
-////        paint.setColor(Color.RED);
-////        canvas.drawBitmap(rotatedImage, new Matrix(), null);
-////        canvas.drawCircle((float) circle[0], (float)circle[1], (float)circle[2], paint);
-////        imgView.setImageBitmap(rotatedImage);
-//
-//        return 1f;
-//    }
-
-    //TODO marge these two methods
+    
     //TODO make this work with gallery
     private void setUpLoadingImage() {
         imgView.setVisibility(View.INVISIBLE);
-
         imgView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.coins2));
 
-        threshSeek.setVisibility(View.VISIBLE);
-        threshText.setVisibility(View.VISIBLE);
-        threshText.setText("Threshold:" + threshSeek.getProgress());
-        distSeek.setVisibility(View.VISIBLE);
-        distText.setVisibility(View.VISIBLE);
-        distText.setText("MinDist:" + distSeek.getProgress());
     }
 
     private void setUpTakingPicture() {
         imgView.setVisibility(View.INVISIBLE);
-
         dispatchTakePictureIntent();
+    }
 
-        threshSeek.setVisibility(View.VISIBLE);
-        threshText.setVisibility(View.VISIBLE);
-        threshText.setText("Threshold:" + threshSeek.getProgress());
-        distSeek.setVisibility(View.VISIBLE);
-        distText.setVisibility(View.VISIBLE);
-        distText.setText("MinDist:" + distSeek.getProgress());
+    private void setSeekVisibility(boolean visible){
+        if(visible){
+            threshSeek.setVisibility(View.VISIBLE);
+            threshText.setVisibility(View.VISIBLE);
+            threshText.setText("Threshold:" + threshSeek.getProgress());
+            distSeek.setVisibility(View.VISIBLE);
+            distText.setVisibility(View.VISIBLE);
+            distText.setText("MinDist:" + distSeek.getProgress());
+        }else{
+            threshSeek.setVisibility(View.GONE);
+            threshText.setVisibility(View.GONE);
+            distSeek.setVisibility(View.GONE);
+            distText.setVisibility(View.GONE);
+        }
     }
 
     public void loadImage(View view) {
@@ -324,9 +252,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            viewModel.setThreshSeekProgress(threshSeek.getProgress());
-            viewModel.setDistSeekProgress(distSeek.getProgress());
-            viewModel.getCircles();
+            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
+            viewModel.savetDistSeekProgress(distSeek.getProgress());
+            viewModel.findCirclesInImage();
+            setSeekVisibility(true);
         } else {
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
         }
@@ -336,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
         if (viewModel.calculateSum()) {
             Intent intent = new Intent(this, ResultsActivity.class);
             startActivity(intent);
+            setSeekVisibility(true);
         } else {
             Toast.makeText(this, "No coins selected", Toast.LENGTH_LONG).show();
         }
