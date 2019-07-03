@@ -69,7 +69,7 @@ public class Model {
     }
 
     public void setProcessedMat(Mat mat) {
-        processedMat = mat;
+        this.processedMat = mat;
     }
 
     public void setProcessedBitmap(Bitmap bitmap) {
@@ -80,7 +80,6 @@ public class Model {
     public void setCircles(Mat circles) {
         this.circles = circles;
     }
-
 
     public void setCurrentPhotoPath(String currentPhotoPath) {
         this.photoPath = currentPhotoPath;
