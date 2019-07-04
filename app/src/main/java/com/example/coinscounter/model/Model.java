@@ -18,6 +18,8 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +29,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 
 public class Model {
     private static final String TAG = "Model";
@@ -112,6 +116,14 @@ public class Model {
             Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
             int radius = (int) Math.round(vCircle[2]);
 
+            //Create a mask to only save the coin and not the background
+            Mat mask = Mat.zeros(processedMat.rows(), processedMat.cols(), 0);
+
+            Imgproc.circle(mask, pt, radius, new Scalar(255, 255, 255), -1, 8, 0);
+            Mat matToSave = new Mat();
+
+            processedMat.copyTo(matToSave, mask);
+
             //Add 5% to the radius to make a cropped box around the coin
             radius *= 1.05;
 
@@ -121,8 +133,8 @@ public class Model {
 
             //Create a new mat to store the cropped coin image
             Rect coinRect = new Rect(x, y, radius * 2, radius * 2);
-            Mat croppedMat = new Mat(processedMat, coinRect);
-
+            Mat croppedMat = new Mat(matToSave, coinRect);
+            
             //Convert the Mat to Bitmap
             Bitmap croppedCoin = Bitmap.createBitmap(croppedMat.cols(), croppedMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedMat, croppedCoin);

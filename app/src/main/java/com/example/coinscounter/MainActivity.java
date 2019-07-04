@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     SeekBar threshSeek;
     TextView distText;
     SeekBar distSeek;
-    int[] viewCoords = new int[2];
     boolean fromPath;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -77,9 +76,6 @@ public class MainActivity extends AppCompatActivity {
             setSeekVisibility(true);
         });
 
-
-//        imgView.getLocationOnScreen(viewCoords);
-
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         distSeek.setMax(150);
         distSeek.setProgress(50);
 
-        //TODO reuse the code
         threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -130,32 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 viewModel.findCirclesInImage(fromPath);
             }
         });
-//
-//        imgView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-//                    //TODO fix variable declarations
-//                    int touchX = (int) motionEvent.getX();
-//                    int touchY = (int) motionEvent.getY();
-//
-//                    int x = touchX - viewCoords[0]; // viewCoords[0] is the X coordinate
-//                    int y = touchY - viewCoords[1]; // viewCoords[1] is the y coordinate
-//                    Log.v(TAG, "X= " + x + " Y= " + y);
-//                    selectCoinOnLocation(x, y);
-//                }
-//                return true;
-//            }
-//        });
-
-//        imgView.setOnTouchListener(this);
-
-
-//        if (OpenCVLoader.initDebug()) {
-//            Toast.makeText(this, "openCv successfully loaded", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(this, "openCv cannot be loaded", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     private void setUpLoadingImage() {

@@ -17,7 +17,6 @@ public final class EuroCoins {
     private static final float e1 = 23.25f;
     private static final float e2 = 25.75f;
 
-    //sorted by value TODO This maybe needs to be automated
     public static final LinkedHashMap<String, Float> stringToFloatMap = new LinkedHashMap<String, Float>() {{
         put("cent1", 0.01f);
         put("cent2", 0.02f);
