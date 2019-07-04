@@ -36,7 +36,6 @@ public class Model {
     private MutableLiveData<Bitmap> processedBitmap = new MutableLiveData<>();
     private MutableLiveData<Float> sum = new MutableLiveData<>();
     private List<Bitmap> croppedPhotosList = new ArrayList<>();
-    private String photoPath;
     private Mat circles;
     private Mat processedMat;
 
@@ -79,14 +78,6 @@ public class Model {
 
     public void setCircles(Mat circles) {
         this.circles = circles;
-    }
-
-    public void setCurrentPhotoPath(String currentPhotoPath) {
-        this.photoPath = currentPhotoPath;
-    }
-
-    public String getPhotoPath() {
-        return photoPath;
     }
 
 

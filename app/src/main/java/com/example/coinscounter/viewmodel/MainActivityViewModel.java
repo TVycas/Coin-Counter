@@ -3,6 +3,8 @@ package com.example.coinscounter.viewmodel;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -12,6 +14,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.coinscounter.model.Model;
 import com.example.coinscounter.utills.ImageProcessing;
 
+import java.io.InputStream;
 
 
 public class MainActivityViewModel extends AndroidViewModel {
@@ -20,6 +23,9 @@ public class MainActivityViewModel extends AndroidViewModel {
     private MutableLiveData<Bitmap> processedBitmap;
     private int threshSeekProgress;
     private int distSeekProgress;
+    private String photoPath;
+    private Bitmap photoBitmap;
+
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
@@ -35,16 +41,24 @@ public class MainActivityViewModel extends AndroidViewModel {
         this.distSeekProgress = distSeekProgress;
     }
 
-    public void setImagePath(String currentPhotoPath) {
-        model.setCurrentPhotoPath(currentPhotoPath);
+    public void setImagePath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+
+    public void setPhotoFromStream(InputStream photoInputStream) {
+        this.photoBitmap = BitmapFactory.decodeStream(photoInputStream);
     }
 
     public LiveData<Bitmap> getProcessedBitmap() {
         return processedBitmap;
     }
 
-    public void findCirclesInImage() {
-        new ImageProcessing(model,700, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(model.getPhotoPath()));
+    public void findCirclesInImage(boolean fromPath) {
+        if(fromPath) {
+            new ImageProcessing(model, 700, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
+        }else{
+            new ImageProcessing(model, 700, threshSeekProgress, distSeekProgress).execute(photoBitmap);
+        }
     }
 
     public boolean calculateSum() {
