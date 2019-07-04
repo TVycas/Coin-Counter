@@ -26,6 +26,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private String photoPath;
     private Bitmap photoBitmap;
     private ImageProcessing currentProcessing = null;
+    private int widthPixels;
 
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -54,19 +55,23 @@ public class MainActivityViewModel extends AndroidViewModel {
         return processedBitmap;
     }
 
-    public void findCirclesInImage(boolean fromPath, int screenWidth) {
+    public void findCirclesInImage(boolean fromPath) {
         if(currentProcessing != null){
             currentProcessing.cancel(true);
         }
 
         if(fromPath) {
-            currentProcessing = (ImageProcessing) new ImageProcessing(model, screenWidth, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
+            currentProcessing = (ImageProcessing) new ImageProcessing(model, widthPixels, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
         }else{
-            currentProcessing = (ImageProcessing) new ImageProcessing(model, screenWidth, threshSeekProgress, distSeekProgress).execute(photoBitmap);
+            currentProcessing = (ImageProcessing) new ImageProcessing(model, widthPixels, threshSeekProgress, distSeekProgress).execute(photoBitmap);
         }
     }
 
     public boolean calculateSum() {
         return model.calculateSum();
+    }
+
+    public void setWidthPixels(int widthPixels) {
+        this.widthPixels = widthPixels;
     }
 }

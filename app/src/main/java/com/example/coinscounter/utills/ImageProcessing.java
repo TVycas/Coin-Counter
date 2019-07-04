@@ -51,7 +51,6 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         src = resizeMat(src, (int) (src.size().width * 0.5));
 
         model.setProcessedMat(src);
-
         Mat mat = src.clone();
 
 //            Utils.bitmapToMat(bitmaps[0], mat);
@@ -85,7 +84,7 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
                 Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
                 int radius = (int) Math.round(vCircle[2]);
 
-                Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0, 100), 2); //The mat is in 4 channels (RGBA)
+                Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0, 100), 8); //The mat is in 4 channels (RGBA)
             }
 
         }
@@ -114,7 +113,7 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         model.setCircles(circles);
     }
 
-    private Mat resizeMat(Mat mat, int newImageWidth){
+    private Mat resizeMat(Mat mat, int newImageWidth) {
         int adjustedHeigth = newImageWidth * (int) mat.size().height / (int) mat.size().width;
         Size sz = new Size(newImageWidth, adjustedHeigth);
         Imgproc.resize(mat, mat, sz);

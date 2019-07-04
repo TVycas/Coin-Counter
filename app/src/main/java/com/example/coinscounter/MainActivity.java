@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     SeekBar threshSeek;
     TextView distText;
     SeekBar distSeek;
-    int widthPixels;
     int[] viewCoords = new int[2];
     boolean fromPath;
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        widthPixels = dm.widthPixels;
+        viewModel.setWidthPixels(dm.widthPixels);
 
         OpenCVLoader.initDebug();
 
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, "formPath --- " + fromPath);
                 viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath, widthPixels);
+                viewModel.findCirclesInImage(fromPath);
             }
         });
 
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 viewModel.savetDistSeekProgress(distSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath, widthPixels);
+                viewModel.findCirclesInImage(fromPath);
             }
         });
 //
@@ -269,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             fromPath = true;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
             viewModel.savetDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath, widthPixels);
+            viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
             fromPath = false;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
             viewModel.savetDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath, widthPixels);
+            viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 
         } else if (requestCode == GALLERY_PICK_IMAGE) {

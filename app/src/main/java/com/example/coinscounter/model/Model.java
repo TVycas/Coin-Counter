@@ -8,10 +8,10 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.coinscounter.utills.EuroCoins;
 import com.example.coinscounter.repository.Repository;
 import com.example.coinscounter.tflite.Classifier;
 import com.example.coinscounter.utills.CoinCardItem;
+import com.example.coinscounter.utills.EuroCoins;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -68,7 +68,7 @@ public class Model {
     }
 
     public void setProcessedMat(Mat mat) {
-        this.processedMat = mat;
+        this.processedMat = mat.clone();
     }
 
     public void setProcessedBitmap(Bitmap bitmap) {
@@ -162,9 +162,17 @@ public class Model {
             results.setValue(new ArrayList<>());
 
             for (Bitmap coin : croppedPhotosList) {
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 75, 75, false);
-                List<Classifier.Recognition> recognitions = classifier.getValue().recognizeImage(scaledBitmap);
-                Classifier.Recognition rec = recognitions.get(0);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 120, 120, false);
+                Classifier.Recognition rec = null;
+
+                try {
+                    List<Classifier.Recognition> recognitions = classifier.getValue().recognizeImage(scaledBitmap);
+                    rec = recognitions.get(0);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
                 Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.stringToFloatMap.get(rec.getTitle()));
                 results.getValue().add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.stringToFloatMap.get(rec.getTitle())));
             }
