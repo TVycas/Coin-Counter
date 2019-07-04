@@ -25,6 +25,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private int distSeekProgress;
     private String photoPath;
     private Bitmap photoBitmap;
+    private ImageProcessing currentProcessing = null;
 
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -53,11 +54,15 @@ public class MainActivityViewModel extends AndroidViewModel {
         return processedBitmap;
     }
 
-    public void findCirclesInImage(boolean fromPath) {
+    public void findCirclesInImage(boolean fromPath, int screenWidth) {
+        if(currentProcessing != null){
+            currentProcessing.cancel(true);
+        }
+
         if(fromPath) {
-            new ImageProcessing(model, 700, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
+            currentProcessing = (ImageProcessing) new ImageProcessing(model, screenWidth, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
         }else{
-            new ImageProcessing(model, 700, threshSeekProgress, distSeekProgress).execute(photoBitmap);
+            currentProcessing = (ImageProcessing) new ImageProcessing(model, screenWidth, threshSeekProgress, distSeekProgress).execute(photoBitmap);
         }
     }
 

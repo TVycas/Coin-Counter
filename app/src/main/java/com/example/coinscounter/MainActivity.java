@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     SeekBar threshSeek;
     TextView distText;
     SeekBar distSeek;
+    int widthPixels;
     int[] viewCoords = new int[2];
     boolean fromPath;
 
@@ -75,21 +77,27 @@ public class MainActivity extends AppCompatActivity {
             imgView.setVisibility(View.VISIBLE);
         });
 
-        imgView.getLocationOnScreen(viewCoords);
+
+//        imgView.getLocationOnScreen(viewCoords);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        widthPixels = dm.widthPixels;
 
         OpenCVLoader.initDebug();
 
         threshSeek.setMax(100);
-        threshSeek.setProgress(24);
+        threshSeek.setProgress(50);
 
         distSeek.setMax(150);
-        distSeek.setProgress(33);
+        distSeek.setProgress(50);
 
         //TODO reuse the code
         threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                threshText.setText("Threshold:" + threshSeek.getProgress());
+                threshText.setText("Threshold: " + threshSeek.getProgress());
             }
 
             @Override
@@ -101,14 +109,14 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, "formPath --- " + fromPath);
                 viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath);
+                viewModel.findCirclesInImage(fromPath, widthPixels);
             }
         });
 
         distSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                distText.setText("MinDist:" + distSeek.getProgress());
+                distText.setText("MinDist: " + distSeek.getProgress());
             }
 
             @Override
@@ -119,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 viewModel.savetDistSeekProgress(distSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath);
+                viewModel.findCirclesInImage(fromPath, widthPixels);
             }
         });
 //
@@ -167,10 +175,10 @@ public class MainActivity extends AppCompatActivity {
         if (visible) {
             threshSeek.setVisibility(View.VISIBLE);
             threshText.setVisibility(View.VISIBLE);
-            threshText.setText("Threshold:" + threshSeek.getProgress());
+            threshText.setText("Threshold: " + threshSeek.getProgress());
             distSeek.setVisibility(View.VISIBLE);
             distText.setVisibility(View.VISIBLE);
-            distText.setText("MinDist:" + distSeek.getProgress());
+            distText.setText("MinDist: " + distSeek.getProgress());
         } else {
             threshSeek.setVisibility(View.GONE);
             threshText.setVisibility(View.GONE);
@@ -261,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
             fromPath = true;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
             viewModel.savetDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath);
+            viewModel.findCirclesInImage(fromPath, widthPixels);
             setSeekVisibility(true);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -282,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             fromPath = false;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
             viewModel.savetDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath);
+            viewModel.findCirclesInImage(fromPath, widthPixels);
             setSeekVisibility(true);
 
         } else if (requestCode == GALLERY_PICK_IMAGE) {

@@ -41,17 +41,11 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
     protected Bitmap doInBackground(Bitmap... bitmaps) {
 
 
-        int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
 //            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth, true);
 
         //create a Mat out of the bitmap
         Mat src = new Mat();
         Utils.bitmapToMat(bitmaps[0], src);
-
-        publishProgress("Starting to resize...");
-
-        Size sz = new Size(imageWidth, adjustedHeigth);
-        Imgproc.resize(src, src, sz);
 
         model.setProcessedMat(src);
 
@@ -83,6 +77,12 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
 
             Imgproc.circle(src, pt, radius, new Scalar(255, 0, 0, 100), 2); //The mat is in 4 channels (RGBA)
         }
+
+        publishProgress("Starting to resize...");
+
+        int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
+        Size sz = new Size(imageWidth, adjustedHeigth);
+        Imgproc.resize(src, src, sz);
 
         Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(src, resultBitmap);
