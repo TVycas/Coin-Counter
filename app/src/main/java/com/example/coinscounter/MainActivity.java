@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
+            setSeekVisibility(true);
         });
 
 
@@ -158,16 +159,14 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
-    //TODO make this work with gallery
     private void setUpLoadingImage() {
-        imgView.setVisibility(View.INVISIBLE);
-
+        setSeekVisibility(false);
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, GALLERY_PICK_IMAGE);
     }
 
     private void setUpTakingPicture() {
-        imgView.setVisibility(View.INVISIBLE);
+        setSeekVisibility(false);
         dispatchTakePictureIntent();
     }
 
@@ -180,10 +179,11 @@ public class MainActivity extends AppCompatActivity {
             distText.setVisibility(View.VISIBLE);
             distText.setText("MinDist: " + distSeek.getProgress());
         } else {
-            threshSeek.setVisibility(View.GONE);
-            threshText.setVisibility(View.GONE);
-            distSeek.setVisibility(View.GONE);
-            distText.setVisibility(View.GONE);
+            imgView.setVisibility(View.GONE);
+            threshSeek.setVisibility(View.INVISIBLE);
+            threshText.setVisibility(View.INVISIBLE);
+            distSeek.setVisibility(View.INVISIBLE);
+            distText.setVisibility(View.INVISIBLE);
         }
     }
 
