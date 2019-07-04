@@ -70,4 +70,8 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
         }catch (Exception e){}
         coinValueStr.setValue(EuroCoins.floatToStringMap.get(newCoinValue));
     }
+
+    public void deteleItem() {
+        model.deleteCoinCardItem(coinCardPosition);
+    }
 }

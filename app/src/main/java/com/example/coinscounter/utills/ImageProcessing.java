@@ -40,10 +40,6 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
     @Override
     protected Bitmap doInBackground(Bitmap... bitmaps) {
 
-
-//            bitmaps[0] = Bitmap.createScaledBitmap(bitmaps[0], imageWidth, adjustedHeigth, true);
-
-
         //create a Mat out of the bitmap
         Mat src = new Mat();
         Utils.bitmapToMat(bitmaps[0], src);
@@ -53,19 +49,13 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         model.setProcessedMat(src);
         Mat mat = src.clone();
 
-//            Utils.bitmapToMat(bitmaps[0], mat);
+        //Converts the mat from CV_8UC4 to CV_8UC1 and applies GaussianBlur for processing
         if (!isCancelled()) {
-            publishProgress("Turning grayscale...");
-            //converts CV_8UC4 to CV_8UC1 for processing
             cvtColor(mat, mat, COLOR_BGR2GRAY);
-
-            publishProgress("Starting convolution...");
             GaussianBlur(mat, mat, new Size(9, 9), 3, 3);
-//            blur( mat, mat, new Size( 10, 10), new Point(-1,-1));
 
         }
 
-        publishProgress("Starting sum calculations..."); // Actual magic
 
         /// Apply the Hough Transform to find the circles
         if (!isCancelled()) {
@@ -76,8 +66,8 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
         Log.d(TAG, "Hough");
         Log.d(TAG, "Mat: " + mat.rows() + " " + mat.cols());
 
+        //Draw red circles round the found coins
         if (!isCancelled()) {
-
             for (int i = 0; i < circles.cols(); i++) {
                 double[] vCircle = circles.get(0, i);
 
@@ -89,12 +79,8 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
 
         }
 
-        publishProgress("Starting to resize...");
-//
-//        int adjustedHeigth = imageWidth * bitmaps[0].getHeight() / bitmaps[0].getWidth();
-//        Size sz = new Size(imageWidth, adjustedHeigth);
-//        Imgproc.resize(src, src, sz);
 
+        //Resize and convert mat to bitmap to display it for the user
         src = resizeMat(src, imageWidth);
 
         Bitmap resultBitmap = Bitmap.createBitmap(src.cols(), src.rows(), Bitmap.Config.ARGB_8888);
@@ -103,7 +89,6 @@ public class ImageProcessing extends AsyncTask<Bitmap, String, Bitmap> {
 
         return resultBitmap;
     }
-
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {

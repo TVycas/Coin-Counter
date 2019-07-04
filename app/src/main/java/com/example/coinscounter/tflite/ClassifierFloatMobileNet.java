@@ -27,6 +27,7 @@ public class ClassifierFloatMobileNet extends Classifier {
 
   }
 
+  //TODO change these to 120
   @Override
   public int getImageSizeX() {
     return 75;

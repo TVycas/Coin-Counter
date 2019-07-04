@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.repository.Repository;
 import com.example.coinscounter.tflite.Classifier;
+import com.example.coinscounter.tflite.ClassifierFloatMobileNet;
 import com.example.coinscounter.utills.CoinCardItem;
 import com.example.coinscounter.utills.EuroCoins;
 
@@ -162,7 +163,7 @@ public class Model {
             results.setValue(new ArrayList<>());
 
             for (Bitmap coin : croppedPhotosList) {
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 120, 120, false);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, classifier.getValue().getImageSizeX(), classifier.getValue().getImageSizeY(), false);
                 Classifier.Recognition rec = null;
 
                 try {
@@ -206,6 +207,14 @@ public class Model {
         ArrayList<CoinCardItem> newCoinList = results.getValue();
 
         newCoinList.set(position, newItem);
+        results.setValue(newCoinList);
+        addResultsItems();
+    }
+
+    public void deleteCoinCardItem(int position) {
+        ArrayList<CoinCardItem> newCoinList = results.getValue();
+
+        newCoinList.remove(position);
         results.setValue(newCoinList);
         addResultsItems();
     }
