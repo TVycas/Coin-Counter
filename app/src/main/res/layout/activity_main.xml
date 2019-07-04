@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,92 +10,85 @@
         android:id="@+id/imageView"
         android:layout_width="388dp"
         android:layout_height="402dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"/>
 
     <Button
         android:id="@+id/takePictureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
         android:onClick="openCamera"
         android:text="Take picture"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_toRightOf="@id/calculateSum"
+        android:layout_below="@id/distSeekBar"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="5dp"/>
 
     <Button
         android:id="@+id/loadImgButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
-        android:layout_marginBottom="16dp"
         android:onClick="loadImage"
         android:text="Load image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/takePictureButton" />
+        android:layout_toLeftOf="@id/calculateSum"
+        android:layout_below="@id/distSeekBar"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="5dp"/>
 
     <Button
         android:id="@+id/calculateSum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="16dp"
         android:text="Calculate Sum"
         android:onClick="calculateSum"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/takePictureButton" />
+        android:layout_below="@id/distSeekBar"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:id="@+id/threshTextView"
-        android:layout_width="164dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/threshSeekBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_below="@id/imageView"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"/>
 
     <SeekBar
         android:id="@+id/threshSeekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="267dp"
+        android:layout_width="270dp"
         android:layout_height="30dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginBottom="16dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/distTextView"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_below="@id/threshTextView"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"/>
 
     <SeekBar
         android:id="@+id/distSeekBar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="267dp"
+        android:layout_width="270dp"
         android:layout_height="30dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginBottom="28dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/calculateSum"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_below="@id/distTextView"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/distTextView"
-        android:layout_width="159dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="124dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/distSeekBar"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_below="@id/threshSeekBar"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
