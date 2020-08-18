@@ -53,11 +53,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    //TensorFLow lite
-    implementation('org.tensorflow:tensorflow-lite:2.1.0') { changing = true }
-//    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
-
     // Image labeling feature with bundled automl model
     implementation 'com.google.mlkit:image-labeling-automl:16.2.0'
 
