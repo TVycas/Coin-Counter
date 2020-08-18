@@ -1,8 +1,6 @@
 package com.example.coinscounter.utills;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 public class CoinCardItem {
     private Bitmap imageResource;

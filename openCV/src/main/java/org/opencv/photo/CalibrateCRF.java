@@ -3,21 +3,25 @@
 //
 package org.opencv.photo;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Algorithm;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class CalibrateCRF
 //javadoc: CalibrateCRF
 
 public class CalibrateCRF extends Algorithm {
 
-    protected CalibrateCRF(long addr) { super(addr); }
+    protected CalibrateCRF(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static CalibrateCRF __fromPtr__(long addr) { return new CalibrateCRF(addr); }
+    public static CalibrateCRF __fromPtr__(long addr) {
+        return new CalibrateCRF(addr);
+    }
 
     //
     // C++:  void cv::CalibrateCRF::process(vector_Mat src, Mat& dst, Mat times)

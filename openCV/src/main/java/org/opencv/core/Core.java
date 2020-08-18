@@ -3,27 +3,38 @@
 //
 package org.opencv.core;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.Scalar;
-import org.opencv.core.TermCriteria;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class Core
 //javadoc: Core
 
 public class Core {
     // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "4.1.0"; }
-    private static String getNativeLibraryName() { return "opencv_java410"; }
-    private static int getVersionMajorJ() { return 4; }
-    private static int getVersionMinorJ() { return 1; }
-    private static int getVersionRevisionJ() { return 0; }
-    private static String getVersionStatusJ() { return ""; }
+    private static String getVersion() {
+        return "4.1.0";
+    }
+
+    private static String getNativeLibraryName() {
+        return "opencv_java410";
+    }
+
+    private static int getVersionMajorJ() {
+        return 4;
+    }
+
+    private static int getVersionMinorJ() {
+        return 1;
+    }
+
+    private static int getVersionRevisionJ() {
+        return 0;
+    }
+
+    private static String getVersionStatusJ() {
+        return "";
+    }
 
     public static final String VERSION = getVersion();
     public static final String NATIVE_LIBRARY_NAME = getNativeLibraryName();

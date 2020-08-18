@@ -4,7 +4,6 @@
 package org.opencv.photo;
 
 import org.opencv.core.Mat;
-import org.opencv.photo.CalibrateCRF;
 
 // C++: class CalibrateRobertson
 //javadoc: CalibrateRobertson

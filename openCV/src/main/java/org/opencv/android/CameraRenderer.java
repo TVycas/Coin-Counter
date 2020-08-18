@@ -1,13 +1,13 @@
 package org.opencv.android;
 
-import java.io.IOException;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.List;
 
 @TargetApi(15)
 @SuppressWarnings("deprecation")

@@ -1,11 +1,5 @@
 package org.opencv.android;
 
-import java.io.File;
-import java.util.StringTokenizer;
-
-import org.opencv.core.Core;
-import org.opencv.engine.OpenCVEngineInterface;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,20 +9,21 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-class AsyncServiceHelper
-{
+import org.opencv.core.Core;
+import org.opencv.engine.OpenCVEngineInterface;
+
+import java.io.File;
+import java.util.StringTokenizer;
+
+class AsyncServiceHelper {
     public static boolean initOpenCV(String Version, final Context AppContext,
-            final LoaderCallbackInterface Callback)
-    {
+                                     final LoaderCallbackInterface Callback) {
         AsyncServiceHelper helper = new AsyncServiceHelper(Version, AppContext, Callback);
         Intent intent = new Intent("org.opencv.engine.BIND");
         intent.setPackage("org.opencv.engine");
-        if (AppContext.bindService(intent, helper.mServiceConnection, Context.BIND_AUTO_CREATE))
-        {
+        if (AppContext.bindService(intent, helper.mServiceConnection, Context.BIND_AUTO_CREATE)) {
             return true;
-        }
-        else
-        {
+        } else {
             AppContext.unbindService(helper.mServiceConnection);
             InstallService(AppContext, Callback);
             return false;

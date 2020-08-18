@@ -1,37 +1,37 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:1-6:12
 	package
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:3:7-27
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:3:7-27
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
 	android:versionName
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:5:7-34
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:5:7-34
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:11-69
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:2:11-69
 	android:versionCode
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml:4:7-33
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml:4:7-33
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
 uses-sdk
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		ADDED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
-		INJECTED from /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		ADDED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml
+		INJECTED from /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/AndroidManifest.xml

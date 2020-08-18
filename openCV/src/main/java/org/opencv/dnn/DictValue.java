@@ -3,8 +3,6 @@
 //
 package org.opencv.dnn;
 
-import java.lang.String;
-
 // C++: class DictValue
 //javadoc: DictValue
 

@@ -3,22 +3,25 @@
 //
 package org.opencv.photo;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.photo.AlignExposures;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class AlignMTB
 //javadoc: AlignMTB
 
 public class AlignMTB extends AlignExposures {
 
-    protected AlignMTB(long addr) { super(addr); }
+    protected AlignMTB(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static AlignMTB __fromPtr__(long addr) { return new AlignMTB(addr); }
+    public static AlignMTB __fromPtr__(long addr) {
+        return new AlignMTB(addr);
+    }
 
     //
     // C++:  Point cv::AlignMTB::calculateShift(Mat img0, Mat img1)

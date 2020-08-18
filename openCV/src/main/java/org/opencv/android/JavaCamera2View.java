@@ -1,8 +1,5 @@
 package org.opencv.android;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -25,6 +22,9 @@ import android.view.ViewGroup.LayoutParams;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * This class is an implementation of the Bridge View between OpenCV and Java Camera.

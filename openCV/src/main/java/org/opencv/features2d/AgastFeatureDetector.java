@@ -3,10 +3,6 @@
 //
 package org.opencv.features2d;
 
-import java.lang.String;
-import org.opencv.features2d.AgastFeatureDetector;
-import org.opencv.features2d.Feature2D;
-
 // C++: class AgastFeatureDetector
 //javadoc: AgastFeatureDetector
 

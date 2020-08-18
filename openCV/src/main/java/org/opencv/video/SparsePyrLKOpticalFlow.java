@@ -5,8 +5,6 @@ package org.opencv.video;
 
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
-import org.opencv.video.SparseOpticalFlow;
-import org.opencv.video.SparsePyrLKOpticalFlow;
 
 // C++: class SparsePyrLKOpticalFlow
 //javadoc: SparsePyrLKOpticalFlow

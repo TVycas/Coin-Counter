@@ -3,10 +3,11 @@
 //
 package org.opencv.features2d;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // C++: class BOWTrainer
 //javadoc: BOWTrainer
@@ -14,19 +15,26 @@ import org.opencv.utils.Converters;
 public class BOWTrainer {
 
     protected final long nativeObj;
-    protected BOWTrainer(long addr) { nativeObj = addr; }
 
-    public long getNativeObjAddr() { return nativeObj; }
+    protected BOWTrainer(long addr) {
+        nativeObj = addr;
+    }
+
+    public long getNativeObjAddr() {
+        return nativeObj;
+    }
 
     // internal usage only
-    public static BOWTrainer __fromPtr__(long addr) { return new BOWTrainer(addr); }
+    public static BOWTrainer __fromPtr__(long addr) {
+        return new BOWTrainer(addr);
+    }
 
     //
     // C++:  Mat cv::BOWTrainer::cluster(Mat descriptors)
     //
 
     //javadoc: BOWTrainer::cluster(descriptors)
-    public  Mat cluster(Mat descriptors)
+    public Mat cluster(Mat descriptors)
     {
         
         Mat retVal = new Mat(cluster_0(nativeObj, descriptors.nativeObj));

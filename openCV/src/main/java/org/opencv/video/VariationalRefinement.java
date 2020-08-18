@@ -4,8 +4,6 @@
 package org.opencv.video;
 
 import org.opencv.core.Mat;
-import org.opencv.video.DenseOpticalFlow;
-import org.opencv.video.VariationalRefinement;
 
 // C++: class VariationalRefinement
 //javadoc: VariationalRefinement

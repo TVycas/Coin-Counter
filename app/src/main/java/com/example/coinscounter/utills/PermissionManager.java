@@ -12,11 +12,9 @@ public class PermissionManager {
 
     public static Boolean getPermission(@NonNull Activity activity,
                                         @NonNull String permission, @NonNull String toastText, @NonNull int permissionID) {
-        if (PackageManager.PERMISSION_GRANTED ==
-                    ContextCompat.checkSelfPermission(activity, permission)) {
-                return true;
-        } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                    permission)){
+        if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(activity, permission)) {
+            return true;
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
             Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
             return false;
         } else {

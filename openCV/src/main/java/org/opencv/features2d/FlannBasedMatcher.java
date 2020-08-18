@@ -3,9 +3,6 @@
 //
 package org.opencv.features2d;
 
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FlannBasedMatcher;
-
 // C++: class FlannBasedMatcher
 //javadoc: FlannBasedMatcher
 

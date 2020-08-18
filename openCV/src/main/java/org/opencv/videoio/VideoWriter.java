@@ -3,7 +3,6 @@
 //
 package org.opencv.videoio;
 
-import java.lang.String;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 

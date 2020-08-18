@@ -30,7 +30,6 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
             textView = itemView.findViewById(R.id.coinTextView);
 
             itemView.setOnClickListener(new View.OnClickListener(){
-
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();

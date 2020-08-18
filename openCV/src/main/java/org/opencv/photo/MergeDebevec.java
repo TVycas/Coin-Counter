@@ -3,21 +3,24 @@
 //
 package org.opencv.photo;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
-import org.opencv.photo.MergeExposures;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class MergeDebevec
 //javadoc: MergeDebevec
 
 public class MergeDebevec extends MergeExposures {
 
-    protected MergeDebevec(long addr) { super(addr); }
+    protected MergeDebevec(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static MergeDebevec __fromPtr__(long addr) { return new MergeDebevec(addr); }
+    public static MergeDebevec __fromPtr__(long addr) {
+        return new MergeDebevec(addr);
+    }
 
     //
     // C++:  void cv::MergeDebevec::process(vector_Mat src, Mat& dst, Mat times, Mat response)

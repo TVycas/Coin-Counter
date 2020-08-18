@@ -3,10 +3,7 @@ package com.example.coinscounter.viewmodel;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -29,7 +26,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     private int widthPixels;
 
 
-    public MainActivityViewModel(@NonNull Application application) {
+    public MainActivityViewModel(Application application) {
         super(application);
         model = Model.getInstance(application);
         processedBitmap = model.getProcessedBitmap();
@@ -39,7 +36,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         this.threshSeekProgress = threshSeekProgress;
     }
 
-    public void savetDistSeekProgress(int distSeekProgress){
+    public void saveDistSeekProgress(int distSeekProgress) {
         this.distSeekProgress = distSeekProgress;
     }
 

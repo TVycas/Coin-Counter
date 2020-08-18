@@ -3,9 +3,6 @@
 //
 package org.opencv.features2d;
 
-import org.opencv.features2d.BFMatcher;
-import org.opencv.features2d.DescriptorMatcher;
-
 // C++: class BFMatcher
 //javadoc: BFMatcher
 

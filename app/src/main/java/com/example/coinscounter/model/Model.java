@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.repository.Repository;
 import com.example.coinscounter.tflite.Classifier;
-import com.example.coinscounter.tflite.ClassifierFloatMobileNet;
 import com.example.coinscounter.utills.CoinCardItem;
 import com.example.coinscounter.utills.EuroCoins;
 
@@ -29,8 +28,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 
 public class Model {
     private static final String TAG = "Model";
@@ -134,7 +131,13 @@ public class Model {
             //Create a new mat to store the cropped coin image
             Rect coinRect = new Rect(x, y, radius * 2, radius * 2);
             Mat croppedMat = new Mat(matToSave, coinRect);
-            
+
+            //todo remove
+//            Log.d(TAG, "Channels: " + croppedMat.channels());
+//            Log.d(TAG, "Type: " + croppedMat.type());
+
+//            cvtColor(croppedMat, croppedMat, COLOR_BGRA2RGBA);
+
             //Convert the Mat to Bitmap
             Bitmap croppedCoin = Bitmap.createBitmap(croppedMat.cols(), croppedMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedMat, croppedCoin);
@@ -145,7 +148,7 @@ public class Model {
             //Save the cropped coin bitmap to disk
             File file = new File(dir, "CroppedCoin_" + System.currentTimeMillis() + ".png");
             fOut = new FileOutputStream(file);
-            croppedCoin.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            croppedCoin.compress(Bitmap.CompressFormat.PNG, 100, fOut);
 
         }
 
@@ -180,13 +183,17 @@ public class Model {
 
                 try {
                     List<Classifier.Recognition> recognitions = classifier.getValue().recognizeImage(scaledBitmap);
+                    for (Classifier.Recognition reco : recognitions) {
+                        Log.d(TAG, reco.getTitle() + " -- " + reco.getConfidence() + " -- " + reco.getId() + "  --- " + EuroCoins.stringToFloatMap.get(reco.getTitle()));
+                    }
+
                     rec = recognitions.get(0);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                     continue;
                 }
 
-                Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.stringToFloatMap.get(rec.getTitle()));
+//                Log.d(TAG, rec.getTitle() + " -- " + rec.getConfidence() + " -- " + rec.getId() + "  --- " + EuroCoins.stringToFloatMap.get(rec.getTitle()));
                 results.getValue().add(new CoinCardItem(scaledBitmap, rec.getTitle(), EuroCoins.stringToFloatMap.get(rec.getTitle())));
             }
 

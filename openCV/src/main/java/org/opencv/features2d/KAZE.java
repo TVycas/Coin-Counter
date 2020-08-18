@@ -3,10 +3,6 @@
 //
 package org.opencv.features2d;
 
-import java.lang.String;
-import org.opencv.features2d.Feature2D;
-import org.opencv.features2d.KAZE;
-
 // C++: class KAZE
 //javadoc: KAZE
 

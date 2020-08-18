@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /home/tomas/AndroidStudioProjects/CoinsCounter/openCV/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
+ * Original file: /mnt/01D36EBD2F205A00/CoinsCounter/openCV/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**

@@ -3,22 +3,26 @@
 //
 package org.opencv.dnn;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Algorithm;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // C++: class Layer
 //javadoc: Layer
 
 public class Layer extends Algorithm {
 
-    protected Layer(long addr) { super(addr); }
+    protected Layer(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static Layer __fromPtr__(long addr) { return new Layer(addr); }
+    public static Layer __fromPtr__(long addr) {
+        return new Layer(addr);
+    }
 
     //
     // C++:  int cv::dnn::Layer::outputNameToIndex(String outputName)

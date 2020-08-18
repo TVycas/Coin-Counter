@@ -3,24 +3,27 @@
 //
 package org.opencv.features2d;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Algorithm;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
-import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.utils.Converters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // C++: class DescriptorMatcher
 //javadoc: DescriptorMatcher
 
 public class DescriptorMatcher extends Algorithm {
 
-    protected DescriptorMatcher(long addr) { super(addr); }
+    protected DescriptorMatcher(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static DescriptorMatcher __fromPtr__(long addr) { return new DescriptorMatcher(addr); }
+    public static DescriptorMatcher __fromPtr__(long addr) {
+        return new DescriptorMatcher(addr);
+    }
 
     // C++: enum MatcherType
     public static final int

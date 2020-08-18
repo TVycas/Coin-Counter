@@ -3,9 +3,6 @@
 //
 package org.opencv.video;
 
-import org.opencv.video.DenseOpticalFlow;
-import org.opencv.video.FarnebackOpticalFlow;
-
 // C++: class FarnebackOpticalFlow
 //javadoc: FarnebackOpticalFlow
 

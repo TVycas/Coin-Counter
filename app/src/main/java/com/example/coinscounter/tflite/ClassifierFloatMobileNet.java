@@ -27,20 +27,19 @@ public class ClassifierFloatMobileNet extends Classifier {
 
   }
 
-  //TODO change these to 120
   @Override
   public int getImageSizeX() {
-    return 75;
+    return 150;
   }
 
   @Override
   public int getImageSizeY() {
-    return 75;
+    return 150;
   }
 
   @Override
   protected String getModelPath() {
-    return "firstModel.tflite";
+    return "thirdModel.tflite";
   }
 
   @Override
@@ -55,9 +54,11 @@ public class ClassifierFloatMobileNet extends Classifier {
 
   @Override
   protected void addPixelValue(int pixelValue) {
+    //Loading pixels in RGBA order (from the initial ARGB)
     imgData.putFloat(((pixelValue >> 16) & 0xFF) / 255.f);
     imgData.putFloat(((pixelValue >> 8) & 0xFF) / 255.f);
     imgData.putFloat((pixelValue & 0xFF) / 255.f);
+    imgData.putFloat(((pixelValue >> 24) & 0xFF) / 255.f);
   }
 
   @Override

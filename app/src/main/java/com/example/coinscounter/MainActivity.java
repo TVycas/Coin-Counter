@@ -20,7 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.coinscounter.utills.PermissionManager;
 import com.example.coinscounter.viewmodel.MainActivityViewModel;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         distText = findViewById(R.id.distTextView);
         distSeek = findViewById(R.id.distSeekBar);
 
-        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
 
         threshSeek.setMax(100);
-        threshSeek.setProgress(50);
+        threshSeek.setProgress(40);
 
         distSeek.setMax(150);
         distSeek.setProgress(50);
@@ -121,21 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.savetDistSeekProgress(distSeek.getProgress());
+                viewModel.saveDistSeekProgress(distSeek.getProgress());
                 viewModel.findCirclesInImage(fromPath);
             }
         });
-    }
-
-    private void setUpLoadingImage() {
-        setSeekVisibility(false);
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, GALLERY_PICK_IMAGE);
-    }
-
-    private void setUpTakingPicture() {
-        setSeekVisibility(false);
-        dispatchTakePictureIntent();
     }
 
     private void setSeekVisibility(boolean visible) {
@@ -162,11 +151,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setUpLoadingImage() {
+        setSeekVisibility(false);
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, GALLERY_PICK_IMAGE);
+    }
+
     public void openCamera(View view) {
         if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
             setUpTakingPicture();
         }
+    }
+
+    private void setUpTakingPicture() {
+        setSeekVisibility(false);
+        dispatchTakePictureIntent();
     }
 
     @Override
@@ -181,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
-
             case PERMISSION_TO_READ_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setUpLoadingImage();
@@ -233,10 +232,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             fromPath = true;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-            viewModel.savetDistSeekProgress(distSeek.getProgress());
+            viewModel.saveDistSeekProgress(distSeek.getProgress());
             viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 photoInputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-            }catch (FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Picture wasn't found!", Toast.LENGTH_SHORT).show();
                 return;
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setPhotoFromStream(photoInputStream);
             fromPath = false;
             viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-            viewModel.savetDistSeekProgress(distSeek.getProgress());
+            viewModel.saveDistSeekProgress(distSeek.getProgress());
             viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 

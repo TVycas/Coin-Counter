@@ -3,24 +3,25 @@
 //
 package org.opencv.ml;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.TermCriteria;
-import org.opencv.ml.EM;
-import org.opencv.ml.StatModel;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class EM
 //javadoc: EM
 
 public class EM extends StatModel {
 
-    protected EM(long addr) { super(addr); }
+    protected EM(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static EM __fromPtr__(long addr) { return new EM(addr); }
+    public static EM __fromPtr__(long addr) {
+        return new EM(addr);
+    }
 
     // C++: enum <unnamed>
     public static final int

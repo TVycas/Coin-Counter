@@ -3,21 +3,25 @@
 //
 package org.opencv.photo;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Algorithm;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class AlignExposures
 //javadoc: AlignExposures
 
 public class AlignExposures extends Algorithm {
 
-    protected AlignExposures(long addr) { super(addr); }
+    protected AlignExposures(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static AlignExposures __fromPtr__(long addr) { return new AlignExposures(addr); }
+    public static AlignExposures __fromPtr__(long addr) {
+        return new AlignExposures(addr);
+    }
 
     //
     // C++:  void cv::AlignExposures::process(vector_Mat src, vector_Mat dst, Mat times, Mat response)

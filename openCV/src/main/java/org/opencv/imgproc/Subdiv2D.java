@@ -3,8 +3,6 @@
 //
 package org.opencv.imgproc;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat4;
 import org.opencv.core.MatOfFloat6;
@@ -14,18 +12,27 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.utils.Converters;
 
+import java.util.List;
+
 // C++: class Subdiv2D
 //javadoc: Subdiv2D
 
 public class Subdiv2D {
 
     protected final long nativeObj;
-    protected Subdiv2D(long addr) { nativeObj = addr; }
 
-    public long getNativeObjAddr() { return nativeObj; }
+    protected Subdiv2D(long addr) {
+        nativeObj = addr;
+    }
+
+    public long getNativeObjAddr() {
+        return nativeObj;
+    }
 
     // internal usage only
-    public static Subdiv2D __fromPtr__(long addr) { return new Subdiv2D(addr); }
+    public static Subdiv2D __fromPtr__(long addr) {
+        return new Subdiv2D(addr);
+    }
 
     // C++: enum <unnamed>
     public static final int

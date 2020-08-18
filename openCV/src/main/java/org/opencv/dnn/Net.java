@@ -3,17 +3,13 @@
 //
 package org.opencv.dnn;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.Scalar;
-import org.opencv.dnn.DictValue;
-import org.opencv.dnn.Layer;
-import org.opencv.dnn.Net;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class Net
 //javadoc: Net
@@ -21,19 +17,26 @@ import org.opencv.utils.Converters;
 public class Net {
 
     protected final long nativeObj;
-    protected Net(long addr) { nativeObj = addr; }
 
-    public long getNativeObjAddr() { return nativeObj; }
+    protected Net(long addr) {
+        nativeObj = addr;
+    }
+
+    public long getNativeObjAddr() {
+        return nativeObj;
+    }
 
     // internal usage only
-    public static Net __fromPtr__(long addr) { return new Net(addr); }
+    public static Net __fromPtr__(long addr) {
+        return new Net(addr);
+    }
 
     //
     // C++:   cv::dnn::Net::Net()
     //
 
     //javadoc: Net::Net()
-    public   Net()
+    public Net()
     {
         
         nativeObj = Net_0();

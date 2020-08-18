@@ -1,10 +1,7 @@
 package com.example.coinscounter;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,8 +12,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.coinscounter.utills.CoinCardItem;
-import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 import com.example.coinscounter.viewmodel.UpdateCoinValueViewModel;
 
 public class UpdateCoinValueActivity extends AppCompatActivity {

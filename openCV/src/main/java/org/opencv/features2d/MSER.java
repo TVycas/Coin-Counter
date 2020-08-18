@@ -3,25 +3,26 @@
 //
 package org.opencv.features2d;
 
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfRect;
-import org.opencv.features2d.Feature2D;
-import org.opencv.features2d.MSER;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class MSER
 //javadoc: MSER
 
 public class MSER extends Feature2D {
 
-    protected MSER(long addr) { super(addr); }
+    protected MSER(long addr) {
+        super(addr);
+    }
 
     // internal usage only
-    public static MSER __fromPtr__(long addr) { return new MSER(addr); }
+    public static MSER __fromPtr__(long addr) {
+        return new MSER(addr);
+    }
 
     //
     // C++: static Ptr_MSER cv::MSER::create(int _delta = 5, int _min_area = 60, int _max_area = 14400, double _max_variation = 0.25, double _min_diversity = .2, int _max_evolution = 200, double _area_threshold = 1.01, double _min_margin = 0.003, int _edge_blur_size = 5)

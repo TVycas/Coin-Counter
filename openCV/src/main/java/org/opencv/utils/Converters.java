@@ -1,9 +1,8 @@
 package org.opencv.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opencv.core.CvType;
+import org.opencv.core.DMatch;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfDMatch;
@@ -13,12 +12,13 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
-import org.opencv.core.Size;
 import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Rect2d;
-import org.opencv.core.DMatch;
-import org.opencv.core.KeyPoint;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Converters {
 

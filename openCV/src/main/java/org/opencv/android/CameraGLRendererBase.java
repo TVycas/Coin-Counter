@@ -1,14 +1,5 @@
 package org.opencv.android;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-import org.opencv.android.CameraGLSurfaceView.CameraTextureListener;
-
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
@@ -16,6 +7,15 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.View;
+
+import org.opencv.android.CameraGLSurfaceView.CameraTextureListener;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 @TargetApi(15)
 public abstract class CameraGLRendererBase implements GLSurfaceView.Renderer, SurfaceTexture.OnFrameAvailableListener {

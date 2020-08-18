@@ -3,22 +3,12 @@
 //
 package org.opencv.photo;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.Point;
-import org.opencv.photo.AlignMTB;
-import org.opencv.photo.CalibrateDebevec;
-import org.opencv.photo.CalibrateRobertson;
-import org.opencv.photo.MergeDebevec;
-import org.opencv.photo.MergeMertens;
-import org.opencv.photo.MergeRobertson;
-import org.opencv.photo.Tonemap;
-import org.opencv.photo.TonemapDrago;
-import org.opencv.photo.TonemapMantiuk;
-import org.opencv.photo.TonemapReinhard;
 import org.opencv.utils.Converters;
+
+import java.util.List;
 
 // C++: class Photo
 //javadoc: Photo

@@ -1,27 +1,27 @@
 package org.opencv.android;
 
-import java.text.DecimalFormat;
-
-import org.opencv.core.Core;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import org.opencv.core.Core;
+
+import java.text.DecimalFormat;
+
 public class FpsMeter {
-    private static final String TAG               = "FpsMeter";
-    private static final int    STEP              = 20;
+    private static final String TAG = "FpsMeter";
+    private static final int STEP = 20;
     private static final DecimalFormat FPS_FORMAT = new DecimalFormat("0.00");
 
-    private int                 mFramesCounter;
-    private double              mFrequency;
-    private long                mprevFrameTime;
-    private String              mStrfps;
-    Paint                       mPaint;
-    boolean                     mIsInitialized = false;
-    int                         mWidth = 0;
-    int                         mHeight = 0;
+    private int mFramesCounter;
+    private double mFrequency;
+    private long mprevFrameTime;
+    private String mStrfps;
+    Paint mPaint;
+    boolean mIsInitialized = false;
+    int mWidth = 0;
+    int mHeight = 0;
 
     public void init() {
         mFramesCounter = 0;

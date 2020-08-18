@@ -3,7 +3,6 @@
 //
 package org.opencv.objdetect;
 
-import java.lang.String;
 import org.opencv.core.Mat;
 
 // C++: class QRCodeDetector

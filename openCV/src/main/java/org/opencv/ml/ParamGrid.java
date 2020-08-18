@@ -3,8 +3,6 @@
 //
 package org.opencv.ml;
 
-import org.opencv.ml.ParamGrid;
-
 // C++: class ParamGrid
 //javadoc: ParamGrid
 

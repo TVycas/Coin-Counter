@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coinscounter.utills.CoinCardAdapter;
-import com.example.coinscounter.utills.CoinCardItem;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
 import java.math.RoundingMode;

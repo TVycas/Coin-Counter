@@ -10,31 +10,33 @@ import com.example.coinscounter.tflite.Classifier.Device;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 
-/**
- * Singleton pattern
- */
+
 public class Repository {
     private static final String TAG = "Repository";
     private static Repository instance;
     private Classifier classifier;
 
-    public static Repository getInstance(){
-        if(instance == null){
+    /**
+     * Singleton pattern
+     */
+    public static Repository getInstance() {
+        if (instance == null) {
             instance = new Repository();
         }
         return instance;
     }
 
     public String getModelPath() {
-        return "firstModel.tflite";
+        return "thirdModel.tflite";
     }
 
-    public MutableLiveData<Classifier> getClassifier(MappedByteBuffer modelFile){
+    public MutableLiveData<Classifier> getClassifier(MappedByteBuffer modelFile) {
         configureClassifier(modelFile);
         MutableLiveData<Classifier> data = new MutableLiveData<>();
         data.setValue(classifier);
         return data;
     }
+
     //todo?
 //    @Override
 //    protected void onInferenceConfigurationChanged() {
