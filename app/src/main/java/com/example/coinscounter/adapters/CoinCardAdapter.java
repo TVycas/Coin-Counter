@@ -46,8 +46,7 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
     @Override
     public CoinCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_card_item, parent, false);
-        CoinCardViewHolder ccvh = new CoinCardViewHolder(v);
-        return ccvh;
+        return new CoinCardViewHolder(v);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -75,10 +74,7 @@ public class MainActivity extends AppCompatActivity {
             setSeekVisibility(true);
         });
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        viewModel.setWidthPixels(dm.widthPixels);
+        viewModel.setWidthPixels(getResources().getDisplayMetrics().widthPixels);
 
         OpenCVLoader.initDebug();
 

@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.model.CoinCardItem;
-import com.example.coinscounter.model.Model;
+import com.example.coinscounter.model.CoinRecognitionModel;
 import com.example.coinscounter.utills.EuroCoins;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class UpdateCoinValueViewModel extends AndroidViewModel {
 
     public static final String TAG = "UpdateCoinValueViewModel";
-    private Model model;
+    private CoinRecognitionModel coinRecognitionModel;
     private Float initCoinValue;
     private Float newCoinValue;
     private int coinCardPosition;
@@ -28,8 +28,7 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
     public UpdateCoinValueViewModel(@NonNull Application application) {
         super(application);
 
-        model = Model.getInstance(application);
-        coinCardList = model.getCardList();
+        coinCardList = coinRecognitionModel.getCardList();
     }
 
     public void init(int coinCardPosition) {
@@ -42,8 +41,8 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
     }
 
     public void updateCoinValue() {
-        if (!newCoinValue.equals(initCoinValue))
-            model.updateCoinCard(coinCardPosition, newCoinValue);
+//        if (!newCoinValue.equals(initCoinValue))
+//            coinRecognitionModel.updateCoinCard(coinCardPosition, newCoinValue);
     }
 
     public LiveData<String> getCoinValueStr() {
@@ -71,6 +70,6 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
     }
 
     public void deteleItem() {
-        model.deleteCoinCardItem(coinCardPosition);
+//        coinRecognitionModel.deleteCoinCardItem(coinCardPosition);
     }
 }

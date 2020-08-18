@@ -8,28 +8,28 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.coinscounter.model.Model;
-import com.example.coinscounter.utills.ImageProcessing;
+import com.example.coinscounter.model.CoinRecognitionModel;
+import com.example.coinscounter.utills.ImageProcessor;
 
 import java.io.InputStream;
 
 
 public class MainActivityViewModel extends AndroidViewModel {
     private static final String TAG = "MainActivityViewModel";
-    private Model model;
+    private CoinRecognitionModel coinRecognitionModel;
     private MutableLiveData<Bitmap> processedBitmap;
     private int threshSeekProgress;
     private int distSeekProgress;
     private String photoPath;
     private Bitmap photoBitmap;
-    private ImageProcessing currentProcessing = null;
+    private ImageProcessor currentProcessing = null;
     private int widthPixels;
 
 
     public MainActivityViewModel(Application application) {
         super(application);
-        model = Model.getInstance(application);
-        processedBitmap = model.getProcessedBitmap();
+//        coinRecognitionModel = CoinRecognitionModel.getInstance();
+        processedBitmap = coinRecognitionModel.getProcessedBitmap();
     }
 
     public void saveThreshSeekProgress(int threshSeekProgress){
@@ -58,14 +58,14 @@ public class MainActivityViewModel extends AndroidViewModel {
         }
 
         if(fromPath) {
-            currentProcessing = (ImageProcessing) new ImageProcessing(model, widthPixels, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
+            currentProcessing = (ImageProcessor) new ImageProcessor(coinRecognitionModel, widthPixels, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
         }else{
-            currentProcessing = (ImageProcessing) new ImageProcessing(model, widthPixels, threshSeekProgress, distSeekProgress).execute(photoBitmap);
+            currentProcessing = (ImageProcessor) new ImageProcessor(coinRecognitionModel, widthPixels, threshSeekProgress, distSeekProgress).execute(photoBitmap);
         }
     }
 
     public boolean calculateSum() {
-        return model.calculateSum();
+        return coinRecognitionModel.calculateSum();
     }
 
     public void setWidthPixels(int widthPixels) {

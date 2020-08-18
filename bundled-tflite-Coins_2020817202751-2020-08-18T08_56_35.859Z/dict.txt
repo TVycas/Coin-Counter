@@ -1,8 +1,0 @@
-euro2
-cent10
-cent50
-cent20
-cent2
-euro1
-cent5
-cent1
