@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.example.coinscounter"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -54,9 +54,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     //TensorFLow lite
-    implementation('org.tensorflow:tensorflow-lite:0.0.0-nightly') { changing = true }
+    implementation('org.tensorflow:tensorflow-lite:2.1.0') { changing = true }
 //    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
-//    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+
+    // Image labeling feature with bundled automl model
+    implementation 'com.google.mlkit:image-labeling-automl:16.2.0'
 
     //RecycleView and CardView
     implementation 'androidx.recyclerview:recyclerview:1.1.0'

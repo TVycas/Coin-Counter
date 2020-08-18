@@ -39,12 +39,12 @@ public class ClassifierFloatMobileNet extends Classifier {
 
   @Override
   protected String getModelPath() {
-    return "thirdModel.tflite";
+    return "tflite_models/thirdModel.tflite";
   }
 
   @Override
   protected String getLabelPath() {
-    return "labels.txt";
+    return "tflite_models/labels.txt";
   }
 
   @Override

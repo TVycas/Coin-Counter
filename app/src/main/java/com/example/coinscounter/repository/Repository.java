@@ -6,6 +6,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.tflite.Classifier;
 import com.example.coinscounter.tflite.Classifier.Device;
+import com.google.mlkit.vision.label.ImageLabeler;
+import com.google.mlkit.vision.label.ImageLabeling;
+import com.google.mlkit.vision.label.automl.AutoMLImageLabelerLocalModel;
+import com.google.mlkit.vision.label.automl.AutoMLImageLabelerOptions;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
@@ -27,29 +31,31 @@ public class Repository {
     }
 
     public String getModelPath() {
-        return "thirdModel.tflite";
+        return "tflite_models/thirdModel.tflite";
     }
 
-    public MutableLiveData<Classifier> getClassifier(MappedByteBuffer modelFile) {
-        configureClassifier(modelFile);
-        MutableLiveData<Classifier> data = new MutableLiveData<>();
-        data.setValue(classifier);
+    public MutableLiveData<ImageLabeler> getClassifier() {
+//        configureClassifier(modelFile);
+
+        AutoMLImageLabelerLocalModel localModel =
+                new AutoMLImageLabelerLocalModel.Builder()
+                        .setAssetFilePath("tflite_models/manifest.json")
+                        // or .setAbsoluteFilePath(absolute file path to manifest file)
+                        .build();
+
+        AutoMLImageLabelerOptions autoMLImageLabelerOptions =
+                new AutoMLImageLabelerOptions.Builder(localModel)
+                        .setConfidenceThreshold(0.35f)  // Evaluate your model in the Firebase console
+                        // to determine an appropriate value.
+                        .build();
+        ImageLabeler labeler = ImageLabeling.getClient(autoMLImageLabelerOptions);
+
+        MutableLiveData<ImageLabeler> data = new MutableLiveData<>();
+        data.setValue(labeler);
+
         return data;
     }
 
-    //todo?
-//    @Override
-//    protected void onInferenceConfigurationChanged() {
-//        if (croppedBitmap == null) {
-//            // Defer creation until we're getting camera frames.
-//            return;
-//        }
-//        final Classifier.Device device = getDevice();
-//        final Classifier.Model model = getModel();
-//        final int numThreads = getNumThreads();
-//        runInBackground(() -> recreateClassifier(model, device, numThreads));
-
-//    }
 
     private void configureClassifier(MappedByteBuffer modelFile) {
         if (classifier != null) {

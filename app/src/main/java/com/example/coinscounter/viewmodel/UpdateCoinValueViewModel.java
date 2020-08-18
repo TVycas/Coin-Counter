@@ -8,8 +8,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.Model;
-import com.example.coinscounter.utills.CoinCardItem;
 import com.example.coinscounter.utills.EuroCoins;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
     public UpdateCoinValueViewModel(@NonNull Application application) {
         super(application);
 
-        model = model.getInstance(application);
+        model = Model.getInstance(application);
         coinCardList = model.getCardList();
     }
 

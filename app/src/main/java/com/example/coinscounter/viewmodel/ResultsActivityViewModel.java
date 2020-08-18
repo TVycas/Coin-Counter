@@ -7,8 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.Model;
-import com.example.coinscounter.utills.CoinCardItem;
 
 import java.util.ArrayList;
 

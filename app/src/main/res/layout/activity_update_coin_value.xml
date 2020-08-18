@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/pop_up_window_background_border"
     android:padding="15dp"
-    tools:context=".UpdateCoinValueActivity">
+    tools:context=".ui.UpdateCoinValueActivity">
 
     <ImageView
         android:id="@+id/coinImage"

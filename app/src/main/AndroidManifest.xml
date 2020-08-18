@@ -19,12 +19,13 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".UpdateCoinValueActivity"
-            android:theme="@style/AppTheme.UpdateWindow"/>
+        <activity
+            android:name=".ui.UpdateCoinValueActivity"
+            android:theme="@style/AppTheme.UpdateWindow" />
 
-        <activity android:name=".ResultsActivity" />
+        <activity android:name=".ui.ResultsActivity" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
