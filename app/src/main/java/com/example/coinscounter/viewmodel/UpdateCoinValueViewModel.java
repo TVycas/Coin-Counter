@@ -1,41 +1,32 @@
 package com.example.coinscounter.viewmodel;
 
-import android.app.Application;
 import android.graphics.Bitmap;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.coinscounter.model.CoinCardItem;
-import com.example.coinscounter.model.CoinRecognitionModel;
+import com.example.coinscounter.repository.Repository;
 import com.example.coinscounter.utills.EuroCoins;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class UpdateCoinValueViewModel extends AndroidViewModel {
-
-    public static final String TAG = "UpdateCoinValueViewModel";
-    private CoinRecognitionModel coinRecognitionModel;
-    private Float initCoinValue;
+public class UpdateCoinValueViewModel extends ViewModel {
+    private Repository repository;
     private Float newCoinValue;
-    private int coinCardPosition;
     private Bitmap coinBitmap;
     private MutableLiveData<String> coinValueStr = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<CoinCardItem>> coinCardList;
+    private LiveData<List<CoinCardItem>> coinCardItems;
 
-    public UpdateCoinValueViewModel(@NonNull Application application) {
-        super(application);
-
-        coinCardList = coinRecognitionModel.getCardList();
+    public UpdateCoinValueViewModel(Repository repository) {
+        this.repository = repository;
+        coinCardItems = repository.getCoinCardItems();
     }
 
     public void init(int coinCardPosition) {
-        this.coinCardPosition = coinCardPosition;
-        CoinCardItem coinCardItem = coinCardList.getValue().get(coinCardPosition);
-        this.initCoinValue = coinCardItem.getValue();
-        newCoinValue = initCoinValue;
+        CoinCardItem coinCardItem = coinCardItems.getValue().get(coinCardPosition);
+        newCoinValue = coinCardItem.getValue();
         this.coinBitmap = coinCardItem.getImageBitmap();
         this.coinValueStr.setValue(coinCardItem.getName());
     }
@@ -57,7 +48,8 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
         int currentPosition = EuroCoins.floatList.indexOf(newCoinValue);
         try {
             newCoinValue = EuroCoins.floatList.get(currentPosition + 1);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         coinValueStr.setValue(EuroCoins.floatToStringMap.get(newCoinValue));
     }
 
@@ -65,11 +57,12 @@ public class UpdateCoinValueViewModel extends AndroidViewModel {
         int currentPosition = EuroCoins.floatList.indexOf(newCoinValue);
         try {
             newCoinValue = EuroCoins.floatList.get(currentPosition - 1);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         coinValueStr.setValue(EuroCoins.floatToStringMap.get(newCoinValue));
     }
 
-    public void deteleItem() {
+    public void deleteItem() {
 //        coinRecognitionModel.deleteCoinCardItem(coinCardPosition);
     }
 }

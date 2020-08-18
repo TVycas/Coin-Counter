@@ -55,15 +55,15 @@ public class Repository {
         return imageToDisplay;
     }
 
-    private LiveData<List<CoinCardItem>> getCoinCards() {
+    public LiveData<List<CoinCardItem>> getCoinCardItems() {
         return coinCardItems;
     }
 
-    public MutableLiveData<Float> getValueOfCoins() {
+    public LiveData<Float> getValueOfCoins() {
         return valueOfCoins;
     }
 
-    private void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
+    public void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
         imageProcessor.processImage(image, lowerThreshold, minDist);
     }
 
@@ -74,6 +74,7 @@ public class Repository {
 
     public void updateCoinCard(int position, float value) {
         CoinCardItem oldItem = coinCardItems.getValue().get(position);
+        // TODO just change the old item instead of creating a new one?
         CoinCardItem newItem = new CoinCardItem(oldItem.getImageBitmap(), EuroCoins.floatToStringMap.get(value), value);
 
         List<CoinCardItem> newCoinList = coinCardItems.getValue();

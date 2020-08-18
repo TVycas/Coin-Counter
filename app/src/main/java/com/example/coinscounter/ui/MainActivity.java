@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        viewModel.getProcessedBitmap().observe(this, (processedBitmap) -> {
+        viewModel.getImageToDisplay().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
             setSeekVisibility(true);

@@ -42,9 +42,9 @@ public class ResultsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        viewModel.getCardList().observe(this, (cardList) -> adapter.setCoins(cardList));
+        viewModel.getCoinCardItems().observe(this, (cardList) -> adapter.setCoins(cardList));
 
-        viewModel.getSum().observe(this, (sum) -> {
+        viewModel.getValueOfCoins().observe(this, (sum) -> {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_UP);
             sumTextView.setText(df.format(sum) + " €");

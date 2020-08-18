@@ -1,74 +1,41 @@
 package com.example.coinscounter.viewmodel;
 
-import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.coinscounter.model.CoinRecognitionModel;
-import com.example.coinscounter.utills.ImageProcessor;
+import com.example.coinscounter.repository.Repository;
 
 import java.io.InputStream;
 
 
-public class MainActivityViewModel extends AndroidViewModel {
-    private static final String TAG = "MainActivityViewModel";
-    private CoinRecognitionModel coinRecognitionModel;
-    private MutableLiveData<Bitmap> processedBitmap;
-    private int threshSeekProgress;
-    private int distSeekProgress;
-    private String photoPath;
-    private Bitmap photoBitmap;
-    private ImageProcessor currentProcessing = null;
-    private int widthPixels;
+public class MainActivityViewModel extends ViewModel {
+    private static final String TAG = MainActivityViewModel.class.getName();
+    private LiveData<Bitmap> imageToDisplay;
+    private Repository repository;
 
-
-    public MainActivityViewModel(Application application) {
-        super(application);
-//        coinRecognitionModel = CoinRecognitionModel.getInstance();
-        processedBitmap = coinRecognitionModel.getProcessedBitmap();
+    public MainActivityViewModel(Repository repository) {
+        this.repository = repository;
+        imageToDisplay = repository.getImageToDisplay();
     }
 
-    public void saveThreshSeekProgress(int threshSeekProgress){
-        this.threshSeekProgress = threshSeekProgress;
+    public LiveData<Bitmap> getImageToDisplay() {
+        return imageToDisplay;
     }
 
-    public void saveDistSeekProgress(int distSeekProgress) {
-        this.distSeekProgress = distSeekProgress;
+    public void processCoinImage(InputStream photoInputStream, int lowerThreshold, int minDist) {
+        Log.i(TAG, "processCoinImage: processing image from stream...");
+        Bitmap imageOfCoins = BitmapFactory.decodeStream(photoInputStream);
+        repository.processCoinImage(imageOfCoins, lowerThreshold, minDist);
     }
 
-    public void setImagePath(String photoPath) {
-        this.photoPath = photoPath;
+    public void processCoinImage(String photoPath, int lowerThreshold, int minDist) {
+        Log.i(TAG, "processCoinImage: processing image from path...");
+        Bitmap imageOfCoins = BitmapFactory.decodeFile(photoPath);
+        repository.processCoinImage(imageOfCoins, lowerThreshold, minDist);
     }
 
-    public void setPhotoFromStream(InputStream photoInputStream) {
-        this.photoBitmap = BitmapFactory.decodeStream(photoInputStream);
-    }
-
-    public LiveData<Bitmap> getProcessedBitmap() {
-        return processedBitmap;
-    }
-
-    public void findCirclesInImage(boolean fromPath) {
-        if(currentProcessing != null){
-            currentProcessing.cancel(true);
-        }
-
-        if(fromPath) {
-            currentProcessing = (ImageProcessor) new ImageProcessor(coinRecognitionModel, widthPixels, threshSeekProgress, distSeekProgress).execute(BitmapFactory.decodeFile(photoPath));
-        }else{
-            currentProcessing = (ImageProcessor) new ImageProcessor(coinRecognitionModel, widthPixels, threshSeekProgress, distSeekProgress).execute(photoBitmap);
-        }
-    }
-
-    public boolean calculateSum() {
-        return coinRecognitionModel.calculateSum();
-    }
-
-    public void setWidthPixels(int widthPixels) {
-        this.widthPixels = widthPixels;
-    }
 }

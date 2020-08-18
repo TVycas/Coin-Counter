@@ -79,7 +79,7 @@ public class UpdateCoinValueActivity extends AppCompatActivity {
     }
 
     public void deleteItem(View view) {
-        viewModel.deteleItem();
+        viewModel.deleteItem();
         finish();
     }
 }
