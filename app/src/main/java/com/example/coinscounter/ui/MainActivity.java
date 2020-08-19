@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar threshSeek;
     private TextView distText;
     private SeekBar distSeek;
-    private boolean fromPath;
+
+    private String photoFileAbsolutePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +72,23 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getImageToDisplay().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
             imgView.setVisibility(View.VISIBLE);
-            setSeekVisibility(true);
+        });
+
+        viewModel.getNumOfSelectedCoins().observe(this, (numOfSelectedCoins) -> {
+            if (numOfSelectedCoins > 0) {
+                calculateSumBtn.setVisibility(View.VISIBLE);
+            } else {
+                calculateSumBtn.setVisibility(View.INVISIBLE);
+                // TODO post message for the user to select coins
+            }
         });
 
         OpenCVLoader.initDebug();
 
+        setUpSeekBars();
+    }
+
+    private void setUpSeekBars() {
         threshSeek.setMax(100);
         threshSeek.setProgress(40);
 
@@ -89,15 +102,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {/* no-op */}
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.d(TAG, "formPath --- " + fromPath);
-//                viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-//                viewModel.findCirclesInImage(fromPath);
+                viewModel.processCoinImage(threshSeek.getProgress(), distSeek.getProgress());
             }
         });
 
@@ -108,14 +117,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {/* no-op */}
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                viewModel.saveDistSeekProgress(distSeek.getProgress());
-//                viewModel.findCirclesInImage(fromPath);
+                viewModel.processCoinImage(distSeek.getProgress(), distSeek.getProgress());
             }
         });
     }
@@ -128,7 +134,10 @@ public class MainActivity extends AppCompatActivity {
             distSeek.setVisibility(View.VISIBLE);
             distText.setVisibility(View.VISIBLE);
             distText.setText("MinDist: " + distSeek.getProgress());
+
+            viewModel.processCoinImage(threshSeek.getProgress(), distSeek.getProgress());
         } else {
+            // TODO do I need to make theses invisible?
             imgView.setVisibility(View.GONE);
             threshSeek.setVisibility(View.INVISIBLE);
             threshText.setVisibility(View.INVISIBLE);
@@ -190,12 +199,8 @@ public class MainActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
+            File photoFile = createImageFile();
+            photoFileAbsolutePath = photoFile.getAbsolutePath();
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
@@ -207,19 +212,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
+    private File createImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        File image = null;
+        try {
+            image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+        } catch (IOException e) {
+            Log.e(TAG, "createImageFile: Failed to create a File for photo", e);
+            e.printStackTrace();
+        }
 
-        // Save a file: path for use with ACTION_VIEW intents
-//        viewModel.setImagePath(image.getAbsolutePath());
         return image;
     }
 
@@ -227,10 +236,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            fromPath = true;
-//            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-//            viewModel.saveDistSeekProgress(distSeek.getProgress());
-//            viewModel.findCirclesInImage(fromPath);
+            viewModel.setImageOfCoins(photoFileAbsolutePath);
             setSeekVisibility(true);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -247,11 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-//            viewModel.setPhotoFromStream(photoInputStream);
-            fromPath = false;
-//            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-//            viewModel.saveDistSeekProgress(distSeek.getProgress());
-//            viewModel.findCirclesInImage(fromPath);
+            viewModel.setImageOfCoins(photoInputStream);
             setSeekVisibility(true);
 
         } else if (requestCode == GALLERY_PICK_IMAGE) {
@@ -260,12 +262,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calculateSum(View view) {
-//        if (viewModel.calculateSum()) {
-//            Intent intent = new Intent(this, ResultsActivity.class);
-//            startActivity(intent);
-//            setSeekVisibility(true);
-//        } else {
-//            Toast.makeText(this, "No coins selected", Toast.LENGTH_LONG).show();
-//        }
+        Intent intent = new Intent(this, ResultsActivity.class);
+        startActivity(intent);
     }
 }

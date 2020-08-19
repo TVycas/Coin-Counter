@@ -48,11 +48,11 @@ public class ImageProcessor {
                 Bitmap bitmapToDisplay = getBitmapToDisplay(resizedImageMat.clone(), circles);
                 List<Bitmap> croppedCoinsList = getCroppedCoinsList(resizedImageMat.clone(), circles);
 
-                try {
-                    saveCoins(croppedCoinsList);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    saveCoins(croppedCoinsList);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
 
                 callback.onComplete(bitmapToDisplay, croppedCoinsList);
             }

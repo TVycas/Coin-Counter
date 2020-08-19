@@ -20,6 +20,7 @@ public class Repository {
     private CoinRecognitionModel coinRecognitionModel;
     private ImageProcessor imageProcessor;
     private List<Bitmap> croppedCoinsList;
+    private MutableLiveData<Integer> numOfSelectedCoins = new MutableLiveData<>();
     private MutableLiveData<List<CoinCardItem>> coinCardItems = new MutableLiveData<>();
     private MutableLiveData<Float> valueOfCoins = new MutableLiveData<>();
     private MutableLiveData<Bitmap> imageToDisplay = new MutableLiveData<>();
@@ -42,11 +43,16 @@ public class Repository {
         return valueOfCoins;
     }
 
+    public LiveData<Integer> getNumOfSelectedCoins() {
+        return numOfSelectedCoins;
+    }
+
     public void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
         imageProcessor.processImage(image, lowerThreshold, minDist, new ImageProcessorCallback() {
             @Override
             public void onComplete(Bitmap processedImage, List<Bitmap> croppedCoins) {
                 croppedCoinsList = croppedCoins;
+                numOfSelectedCoins.postValue(croppedCoinsList.size());
                 imageToDisplay.postValue(processedImage);
             }
         });
