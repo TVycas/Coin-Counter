@@ -14,20 +14,16 @@ import com.google.mlkit.vision.label.ImageLabeler;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class CoinRecognitionModel {
     private static final String TAG = "CoinRecognitionModel";
     private static CoinRecognitionModel instance;
     private ImageLabeler classifier;
 
-    private CoinRecognitionModel(ImageLabeler imageLabeler) {
+    @Inject
+    public CoinRecognitionModel(ImageLabeler imageLabeler) {
         classifier = imageLabeler;
-    }
-
-    public static CoinRecognitionModel getInstance(ImageLabeler imageLabeler) {
-        if (instance == null) {
-            instance = new CoinRecognitionModel(imageLabeler);
-        }
-        return instance;
     }
 
     public static float calculateCoinValue(List<CoinCardItem> coins) {

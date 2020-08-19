@@ -16,6 +16,9 @@ import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ResultsActivity extends AppCompatActivity {
 
     public static final String TAG = "ResultsActivity";

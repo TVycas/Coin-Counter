@@ -10,45 +10,24 @@ import com.example.coinscounter.model.CoinRecognitionModel;
 import com.example.coinscounter.utills.EuroCoins;
 import com.example.coinscounter.utills.ImageProcessor;
 import com.example.coinscounter.utills.ImageProcessorCallback;
-import com.google.mlkit.vision.label.ImageLabeler;
-import com.google.mlkit.vision.label.ImageLabeling;
-import com.google.mlkit.vision.label.automl.AutoMLImageLabelerLocalModel;
-import com.google.mlkit.vision.label.automl.AutoMLImageLabelerOptions;
 
 import java.util.List;
-import java.util.concurrent.Executor;
+
+import javax.inject.Inject;
 
 
 public class Repository {
-    private static Repository instance;
-    private MutableLiveData<List<CoinCardItem>> coinCardItems;
-    private MutableLiveData<Float> valueOfCoins;
     private CoinRecognitionModel coinRecognitionModel;
     private ImageProcessor imageProcessor;
-    private MutableLiveData<Bitmap> imageToDisplay;
     private List<Bitmap> croppedCoinsList;
+    private MutableLiveData<List<CoinCardItem>> coinCardItems = new MutableLiveData<>();
+    private MutableLiveData<Float> valueOfCoins = new MutableLiveData<>();
+    private MutableLiveData<Bitmap> imageToDisplay = new MutableLiveData<>();
 
-    /**
-     * Singleton pattern
-     */
-    public static Repository getInstance() {
-        if (instance == null) {
-            instance = new Repository();
-        }
-        return instance;
-    }
-
-    private Repository(int displayWidthPixels, Executor executor) {
-        // TODO inject classifier
-        coinRecognitionModel = CoinRecognitionModel.getInstance(getClassifier());
-
-        imageProcessor = new ImageProcessor(displayWidthPixels, executor, new ImageProcessorCallback() {
-            @Override
-            public void onComplete(Bitmap processedImage, List<Bitmap> croppedCoins) {
-                croppedCoinsList = croppedCoins;
-                imageToDisplay.postValue(processedImage);
-            }
-        });
+    @Inject
+    public Repository(ImageProcessor imageProcessor, CoinRecognitionModel model) {
+        this.coinRecognitionModel = model;
+        this.imageProcessor = imageProcessor;
     }
 
     public LiveData<Bitmap> getImageToDisplay() {
@@ -64,7 +43,13 @@ public class Repository {
     }
 
     public void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
-        imageProcessor.processImage(image, lowerThreshold, minDist);
+        imageProcessor.processImage(image, lowerThreshold, minDist, new ImageProcessorCallback() {
+            @Override
+            public void onComplete(Bitmap processedImage, List<Bitmap> croppedCoins) {
+                croppedCoinsList = croppedCoins;
+                imageToDisplay.postValue(processedImage);
+            }
+        });
     }
 
     public void recognizeCoins() {
@@ -88,19 +73,5 @@ public class Repository {
 
         newCoinList.remove(position);
         coinCardItems.setValue(newCoinList);
-    }
-
-    public ImageLabeler getClassifier() {
-        AutoMLImageLabelerLocalModel localModel =
-                new AutoMLImageLabelerLocalModel.Builder()
-                        .setAssetFilePath("tflite_models/manifest.json")
-                        .build();
-
-        AutoMLImageLabelerOptions autoMLImageLabelerOptions =
-                new AutoMLImageLabelerOptions.Builder(localModel)
-                        .setConfidenceThreshold(0.35f)
-                        .build();
-
-        return ImageLabeling.getClient(autoMLImageLabelerOptions);
     }
 }

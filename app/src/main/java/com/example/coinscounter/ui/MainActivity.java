@@ -33,33 +33,33 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int GALLERY_PICK_IMAGE = 4;
-    static final int PERMISSION_TO_WRITE_STORAGE = 2;
-    static final int PERMISSION_TO_READ_STORAGE = 3;
-    static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getName();
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int GALLERY_PICK_IMAGE = 4;
+    private static final int PERMISSION_TO_WRITE_STORAGE = 2;
+    private static final int PERMISSION_TO_READ_STORAGE = 3;
 
     private MainActivityViewModel viewModel;
-    Button takePictureBtn;
-    Button calculateSumBtn;
-    Button loadImgBtn;
-    ImageView imgView;
-    TextView threshText;
-    SeekBar threshSeek;
-    TextView distText;
-    SeekBar distSeek;
-    boolean fromPath;
+    private Button calculateSumBtn;
+    private ImageView imgView;
+    private TextView threshText;
+    private SeekBar threshSeek;
+    private TextView distText;
+    private SeekBar distSeek;
+    private boolean fromPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        takePictureBtn = findViewById(R.id.takePictureButton);
         calculateSumBtn = findViewById(R.id.calculateSum);
-        loadImgBtn = findViewById(R.id.loadImgButton);
         imgView = findViewById(R.id.imageView);
         threshText = findViewById(R.id.threshTextView);
         threshSeek = findViewById(R.id.threshSeekBar);
@@ -73,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
             imgView.setVisibility(View.VISIBLE);
             setSeekVisibility(true);
         });
-
-        viewModel.setWidthPixels(getResources().getDisplayMetrics().widthPixels);
 
         OpenCVLoader.initDebug();
 
@@ -98,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d(TAG, "formPath --- " + fromPath);
-                viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath);
+//                viewModel.saveThreshSeekProgress(threshSeek.getProgress());
+//                viewModel.findCirclesInImage(fromPath);
             }
         });
 
@@ -116,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.saveDistSeekProgress(distSeek.getProgress());
-                viewModel.findCirclesInImage(fromPath);
+//                viewModel.saveDistSeekProgress(distSeek.getProgress());
+//                viewModel.findCirclesInImage(fromPath);
             }
         });
     }
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        viewModel.setImagePath(image.getAbsolutePath());
+//        viewModel.setImagePath(image.getAbsolutePath());
         return image;
     }
 
@@ -230,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             fromPath = true;
-            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-            viewModel.saveDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath);
+//            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
+//            viewModel.saveDistSeekProgress(distSeek.getProgress());
+//            viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -249,11 +247,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            viewModel.setPhotoFromStream(photoInputStream);
+//            viewModel.setPhotoFromStream(photoInputStream);
             fromPath = false;
-            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
-            viewModel.saveDistSeekProgress(distSeek.getProgress());
-            viewModel.findCirclesInImage(fromPath);
+//            viewModel.saveThreshSeekProgress(threshSeek.getProgress());
+//            viewModel.saveDistSeekProgress(distSeek.getProgress());
+//            viewModel.findCirclesInImage(fromPath);
             setSeekVisibility(true);
 
         } else if (requestCode == GALLERY_PICK_IMAGE) {
@@ -262,12 +260,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void calculateSum(View view) {
-        if (viewModel.calculateSum()) {
-            Intent intent = new Intent(this, ResultsActivity.class);
-            startActivity(intent);
-            setSeekVisibility(true);
-        } else {
-            Toast.makeText(this, "No coins selected", Toast.LENGTH_LONG).show();
-        }
+//        if (viewModel.calculateSum()) {
+//            Intent intent = new Intent(this, ResultsActivity.class);
+//            startActivity(intent);
+//            setSeekVisibility(true);
+//        } else {
+//            Toast.makeText(this, "No coins selected", Toast.LENGTH_LONG).show();
+//        }
     }
 }

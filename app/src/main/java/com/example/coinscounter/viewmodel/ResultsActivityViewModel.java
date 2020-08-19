@@ -1,5 +1,6 @@
 package com.example.coinscounter.viewmodel;
 
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -12,7 +13,7 @@ public class ResultsActivityViewModel extends ViewModel {
     private LiveData<List<CoinCardItem>> coinCardItems;
     private LiveData<Float> sum;
 
-
+    @ViewModelInject
     public ResultsActivityViewModel(Repository repository) {
         coinCardItems = repository.getCoinCardItems();
         sum = repository.getValueOfCoins();

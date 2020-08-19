@@ -2,6 +2,7 @@ package com.example.coinscounter.viewmodel;
 
 import android.graphics.Bitmap;
 
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -19,6 +20,7 @@ public class UpdateCoinValueViewModel extends ViewModel {
     private MutableLiveData<String> coinValueStr = new MutableLiveData<>();
     private LiveData<List<CoinCardItem>> coinCardItems;
 
+    @ViewModelInject
     public UpdateCoinValueViewModel(Repository repository) {
         this.repository = repository;
         coinCardItems = repository.getCoinCardItems();

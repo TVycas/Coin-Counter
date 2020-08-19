@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -17,6 +18,7 @@ public class MainActivityViewModel extends ViewModel {
     private LiveData<Bitmap> imageToDisplay;
     private Repository repository;
 
+    @ViewModelInject
     public MainActivityViewModel(Repository repository) {
         this.repository = repository;
         imageToDisplay = repository.getImageToDisplay();

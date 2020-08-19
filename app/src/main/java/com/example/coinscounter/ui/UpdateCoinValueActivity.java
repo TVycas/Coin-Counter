@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.coinscounter.R;
 import com.example.coinscounter.viewmodel.UpdateCoinValueViewModel;
 
+
 public class UpdateCoinValueActivity extends AppCompatActivity {
 
     private static final String TAG = "UpdateCoinValueActivity";

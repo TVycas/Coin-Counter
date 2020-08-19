@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import javax.inject.Inject;
+
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.CV_HOUGH_GRADIENT;
 import static org.opencv.imgproc.Imgproc.GaussianBlur;
@@ -30,16 +32,14 @@ public class ImageProcessor {
     //TODO capitalize
     private final int imageWidth;
     private final Executor executor;
-    private final ImageProcessorCallback callback;
 
-    public ImageProcessor(int imageWidth, Executor executor, ImageProcessorCallback callback) {
+    @Inject
+    public ImageProcessor(int imageWidth, Executor executor) {
         this.imageWidth = imageWidth;
         this.executor = executor;
-        this.callback = callback;
-
     }
 
-    public void processImage(Bitmap image, int lowerThreshold, int minDist) {
+    public void processImage(Bitmap image, int lowerThreshold, int minDist, ImageProcessorCallback callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
