@@ -5,20 +5,21 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.coinscounter.utills.EuroCoins;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.label.ImageLabel;
 import com.google.mlkit.vision.label.ImageLabeler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class CoinRecognitionModel {
-    private static final String TAG = "CoinRecognitionModel";
-    private static CoinRecognitionModel instance;
+    private static final String TAG = CoinRecognitionModel.class.getName();
     private ImageLabeler classifier;
 
     @Inject
@@ -32,29 +33,29 @@ public class CoinRecognitionModel {
         for (CoinCardItem coin : coins) {
             sum += coin.getValue();
         }
-
         return sum;
     }
 
-    public ArrayList<CoinCardItem> recognizeCoins(List<Bitmap> croppedCoinsList) {
-        ArrayList<CoinCardItem> coinCardItems = new ArrayList<>();
+    public void recognizeCoins(List<Bitmap> croppedCoinsList, CoinRecognitionCallback callback) {
         for (Bitmap coin : croppedCoinsList) {
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(coin, 150, 150, false);
-
+            Bitmap scaledCoinBitmap = Bitmap.createScaledBitmap(coin, 150, 150, false);
             int rotationDegree = 0;
-            InputImage image = InputImage.fromBitmap(scaledBitmap, rotationDegree);
+            InputImage image = InputImage.fromBitmap(scaledCoinBitmap, rotationDegree);
 
             classifier.process(image)
                     .addOnSuccessListener(new OnSuccessListener<List<ImageLabel>>() {
                         @Override
                         public void onSuccess(List<ImageLabel> labels) {
-                            for (ImageLabel label : labels) {
-                                String text = label.getText();
-                                float confidence = label.getConfidence();
-                                int index = label.getIndex();
+                            if (labels.size() > 0) {
+                                String predictedClass = labels.get(0).getText();
+                                float confidence = labels.get(0).getConfidence();
+                                int index = labels.get(0).getIndex();
 
-                                //TODO figure out how to construct the Coin objects from the results
-                                Log.d(TAG, "onSuccess: text: " + text + "; confidence: " + confidence + "; index: " + index);
+                                Log.d(TAG, "onSuccess: text: " + predictedClass + "; confidence: " + confidence + "; index: " + index);
+                                CoinCardItem coinCardItem = new CoinCardItem(coin, predictedClass, EuroCoins.stringToFloatMap.get(predictedClass));
+                                callback.onPrediction(coinCardItem);
+                            } else {
+                                callback.onPrediction(null);
                             }
                         }
                     })
@@ -62,9 +63,14 @@ public class CoinRecognitionModel {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.d(TAG, "onFailure: Failed to classify image");
+                            callback.onPrediction(null);
                         }
                     });
         }
-        return coinCardItems;
     }
+
+    public interface CoinRecognitionCallback {
+        void onPrediction(CoinCardItem coinCardItem);
+    }
+
 }

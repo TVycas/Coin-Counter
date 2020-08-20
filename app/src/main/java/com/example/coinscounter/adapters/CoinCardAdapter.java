@@ -16,37 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCardViewHolder> {
+    private static final String TAG = CoinCardAdapter.class.getName();
+    private List<CoinCardItem> coinCardList = new ArrayList<>();
+    private OnItemClickListener listener;
 
-    private ArrayList<CoinCardItem> coinCardList = new ArrayList<>();
-    private onItemClickListener listener;
+    public CoinCardAdapter(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
-
-    public class CoinCardViewHolder extends RecyclerView.ViewHolder{
-        public ImageView imageView;
-        public TextView textView;
-
-        public CoinCardViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.coinImage);
-            textView = itemView.findViewById(R.id.coinTextView);
-
-            itemView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(position);
-                    }
-                }
-            });
+    public void setCoins(List<CoinCardItem> coinCards) {
+        if (coinCards != null) {
+            this.coinCardList = coinCards;
+            notifyDataSetChanged();
         }
     }
 
     @NonNull
     @Override
     public CoinCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_card_item, parent, false);
-        return new CoinCardViewHolder(v);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_card_item, parent, false);
+        return new CoinCardViewHolder(view, listener);
     }
 
     @Override
@@ -59,19 +48,34 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
 
     @Override
     public int getItemCount() {
-        return coinCardList.size();
+        return coinCardList == null ? 0 : coinCardList.size();
     }
 
-    public void setCoins(List<CoinCardItem> coinCards){
-        this.coinCardList = (ArrayList<CoinCardItem>) coinCards;
-        notifyDataSetChanged();
-    }
+    public interface OnItemClickListener {
 
-    public interface onItemClickListener{
         void onItemClick(int coinCardItemPosition);
     }
 
-    public void setOnItemClickListener(onItemClickListener listener){
-        this.listener = listener;
+    public class CoinCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public ImageView imageView;
+        public TextView textView;
+        public OnItemClickListener onCoinListener;
+
+        public CoinCardViewHolder(@NonNull View itemView, OnItemClickListener onCountryListener) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.coin_image);
+            textView = itemView.findViewById(R.id.coinTextView);
+            this.onCoinListener = onCountryListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                onCoinListener.onItemClick(position);
+            }
+        }
     }
 }

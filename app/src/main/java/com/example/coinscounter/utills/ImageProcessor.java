@@ -62,7 +62,7 @@ public class ImageProcessor {
     private ArrayList<Bitmap> getCroppedCoinsList(Mat resizedImageMat, Mat circles) {
         ArrayList<Bitmap> croppedCoinsList = new ArrayList<>();
         for (int i = 0; i < circles.cols(); i++) {
-            Log.d(TAG, "Saving coin numb " + i);
+            Log.d(TAG, "Cropping coin numb " + i);
             double[] vCircle = circles.get(0, i);
 
             Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
@@ -100,7 +100,7 @@ public class ImageProcessor {
             croppedCoinsList.add(croppedCoin);
         }
 
-        Log.d(TAG, "number of saved coins = " + croppedCoinsList.size());
+        Log.d(TAG, "Total cropped coins: " + croppedCoinsList.size());
         return croppedCoinsList;
     }
 
@@ -176,6 +176,10 @@ public class ImageProcessor {
         Imgproc.resize(mat, mat, sz);
 
         return mat;
+    }
+
+    public interface ImageProcessorCallback {
+        void onComplete(Bitmap imageToDisplay, List<Bitmap> croppedCoinsList);
     }
 }
 

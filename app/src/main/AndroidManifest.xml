@@ -20,10 +20,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity
-            android:name=".ui.UpdateCoinValueActivity"
-            android:theme="@style/AppTheme.UpdateWindow" />
-
         <activity android:name=".ui.ResultsActivity" />
 
         <activity android:name=".ui.MainActivity">

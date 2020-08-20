@@ -1,29 +1,33 @@
 package com.example.coinscounter.repository;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.CoinRecognitionModel;
-import com.example.coinscounter.utills.EuroCoins;
 import com.example.coinscounter.utills.ImageProcessor;
-import com.example.coinscounter.utills.ImageProcessorCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-
+@Singleton
 public class Repository {
     private CoinRecognitionModel coinRecognitionModel;
     private ImageProcessor imageProcessor;
     private List<Bitmap> croppedCoinsList;
+
     private MutableLiveData<Integer> numOfSelectedCoins = new MutableLiveData<>();
     private MutableLiveData<List<CoinCardItem>> coinCardItems = new MutableLiveData<>();
     private MutableLiveData<Float> valueOfCoins = new MutableLiveData<>();
     private MutableLiveData<Bitmap> imageToDisplay = new MutableLiveData<>();
+
+    private static final String TAG = Repository.class.getName();
 
     @Inject
     public Repository(ImageProcessor imageProcessor, CoinRecognitionModel model) {
@@ -48,7 +52,7 @@ public class Repository {
     }
 
     public void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
-        imageProcessor.processImage(image, lowerThreshold, minDist, new ImageProcessorCallback() {
+        imageProcessor.processImage(image, lowerThreshold, minDist, new ImageProcessor.ImageProcessorCallback() {
             @Override
             public void onComplete(Bitmap processedImage, List<Bitmap> croppedCoins) {
                 croppedCoinsList = croppedCoins;
@@ -59,18 +63,36 @@ public class Repository {
     }
 
     public void recognizeCoins() {
-        coinCardItems.setValue(coinRecognitionModel.recognizeCoins(croppedCoinsList));
-        valueOfCoins.setValue(CoinRecognitionModel.calculateCoinValue(coinCardItems.getValue()));
+        coinRecognitionModel.recognizeCoins(croppedCoinsList, new CoinRecognitionModel.CoinRecognitionCallback() {
+            private List<CoinCardItem> returnedCoinCardItems = new ArrayList<>();
+            private int noPredictionCounter = 0;
+
+            @Override
+            public void onPrediction(CoinCardItem coinCardItem) {
+                if (coinCardItem != null) {
+                    returnedCoinCardItems.add(coinCardItem);
+                } else {
+                    noPredictionCounter++;
+                }
+
+                if (returnedCoinCardItems.size() + noPredictionCounter == croppedCoinsList.size()) {
+                    Log.i(TAG, "onPrediction: Setting " + returnedCoinCardItems.size() + " predicted values of coins out of " + croppedCoinsList.size());
+                    coinCardItems.setValue(returnedCoinCardItems);
+                }
+            }
+        });
+
+        if (coinCardItems.getValue() != null) {
+            valueOfCoins.setValue(CoinRecognitionModel.calculateCoinValue(coinCardItems.getValue()));
+        } else {
+            valueOfCoins.setValue(0f);
+        }
     }
 
-    public void updateCoinCard(int position, float value) {
-        CoinCardItem oldItem = coinCardItems.getValue().get(position);
-        // TODO just change the old item instead of creating a new one?
-        CoinCardItem newItem = new CoinCardItem(oldItem.getImageBitmap(), EuroCoins.floatToStringMap.get(value), value);
-
+    public void updateCoinCard(CoinCardItem coinCardItem, int position) {
         List<CoinCardItem> newCoinList = coinCardItems.getValue();
 
-        newCoinList.set(position, newItem);
+        newCoinList.set(position, coinCardItem);
         coinCardItems.setValue(newCoinList);
     }
 

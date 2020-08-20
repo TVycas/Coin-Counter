@@ -13,7 +13,7 @@
         android:padding="5dp">
 
         <ImageView
-            android:id="@+id/coinImage"
+            android:id="@+id/coin_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:padding="2dp" />

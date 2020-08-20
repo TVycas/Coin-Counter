@@ -1,51 +1,52 @@
 package com.example.coinscounter.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coinscounter.R;
 import com.example.coinscounter.adapters.CoinCardAdapter;
+import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements UpdateCoinValueDialogFragment.UpdateCoinDialogListener {
 
-    public static final String TAG = "ResultsActivity";
+    private static final String TAG = ResultsActivity.class.getName();
     private ResultsActivityViewModel viewModel;
     private RecyclerView recyclerView;
     private TextView sumTextView;
     private CoinCardAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private List<CoinCardItem> coinCardItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        viewModel = ViewModelProviders.of(this).get(ResultsActivityViewModel.class);
-
         sumTextView = findViewById(R.id.sumView);
-        recyclerView = findViewById(R.id.recyclerView);
 
-//        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        adapter = new CoinCardAdapter();
+        viewModel = new ViewModelProvider(this).get(ResultsActivityViewModel.class);
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-
-        viewModel.getCoinCardItems().observe(this, (cardList) -> adapter.setCoins(cardList));
+        viewModel.getCoinCardItems().observe(this, new Observer<List<CoinCardItem>>() {
+            @Override
+            public void onChanged(List<CoinCardItem> cardList) {
+                coinCardItems = cardList;
+                adapter.setCoins(cardList);
+            }
+        });
 
         viewModel.getValueOfCoins().observe(this, (sum) -> {
             DecimalFormat df = new DecimalFormat("#.##");
@@ -53,13 +54,32 @@ public class ResultsActivity extends AppCompatActivity {
             sumTextView.setText(df.format(sum) + " €");
         });
 
-        adapter.setOnItemClickListener(new CoinCardAdapter.onItemClickListener() {
+        viewModel.recognizeCoins();
+
+        setUpRecyclerView();
+    }
+
+    private void setUpRecyclerView() {
+        adapter = new CoinCardAdapter(new CoinCardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int coinCardItemPosition) {
-                Intent intent = new Intent(ResultsActivity.this, UpdateCoinValueActivity.class);
-                intent.putExtra("CoinCardItemPosition", coinCardItemPosition);
-                startActivity(intent);
+                DialogFragment newFragment = new UpdateCoinValueDialogFragment(coinCardItems.get(coinCardItemPosition), coinCardItemPosition);
+                newFragment.show(getSupportFragmentManager(), "update_coin_value");
             }
         });
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    public void onUpdateCoin(CoinCardItem coinCardItem, int coinCardItemPosition) {
+        viewModel.updateCoinValue(coinCardItem, coinCardItemPosition);
+    }
+
+    @Override
+    public void onDeleteCoin(int coinCardItemPosition) {
+        viewModel.deleteCoin(coinCardItemPosition);
     }
 }
