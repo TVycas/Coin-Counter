@@ -1,6 +1,8 @@
 package com.example.coinscounter.ui;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +17,6 @@ import com.example.coinscounter.adapters.CoinCardAdapter;
 import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -30,6 +30,7 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
     private TextView sumTextView;
     private CoinCardAdapter adapter;
     private List<CoinCardItem> coinCardItems;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +40,25 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         sumTextView = findViewById(R.id.sumView);
 
         viewModel = new ViewModelProvider(this).get(ResultsActivityViewModel.class);
+        viewModel.recognizeCoins();
+
+        progressBar = findViewById(R.id.progress_circular);
+        progressBar.setVisibility(View.VISIBLE);
 
         viewModel.getCoinCardItems().observe(this, new Observer<List<CoinCardItem>>() {
             @Override
             public void onChanged(List<CoinCardItem> cardList) {
                 coinCardItems = cardList;
                 adapter.setCoins(cardList);
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                sumTextView.setVisibility(View.VISIBLE);
             }
         });
 
         viewModel.getValueOfCoins().observe(this, (sum) -> {
-            DecimalFormat df = new DecimalFormat("#.##");
-            df.setRoundingMode(RoundingMode.HALF_UP);
-            sumTextView.setText(df.format(sum) + " €");
+            sumTextView.setText(sum);
         });
-
-        viewModel.recognizeCoins();
 
         setUpRecyclerView();
     }
