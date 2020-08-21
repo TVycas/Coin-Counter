@@ -2,45 +2,28 @@ package com.example.coinscounter.viewmodel;
 
 import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.coinscounter.model.CoinCardItem;
+import com.example.coinscounter.model.CoinResults;
 import com.example.coinscounter.repository.Repository;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.List;
 
 public class ResultsActivityViewModel extends ViewModel {
     private Repository repository;
-    private LiveData<List<CoinCardItem>> coinCardItems;
-    private LiveData<String> formattedSum;
+    private LiveData<CoinResults> coinResults;
 
     @ViewModelInject
     public ResultsActivityViewModel(Repository repository) {
         this.repository = repository;
-        coinCardItems = repository.getCoinCardItems();
-        LiveData<Float> sumFloat = repository.getValueOfCoins();
-
-        formattedSum = Transformations.map(sumFloat,
-                sum -> {
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    df.setRoundingMode(RoundingMode.HALF_UP);
-                    return df.format(sum) + " €";
-                });
+        coinResults = repository.getCoinResults();
     }
 
     public void recognizeCoins() {
         repository.recognizeCoins();
     }
 
-    public LiveData<List<CoinCardItem>> getCoinCardItems() {
-        return coinCardItems;
-    }
-
-    public LiveData<String> getValueOfCoins() {
-        return formattedSum;
+    public LiveData<CoinResults> getCoinResults() {
+        return coinResults;
     }
 
     public void deleteCoin(int coinCardItemPosition) {

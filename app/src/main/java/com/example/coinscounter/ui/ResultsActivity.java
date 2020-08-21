@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coinscounter.R;
 import com.example.coinscounter.adapters.CoinCardAdapter;
 import com.example.coinscounter.model.CoinCardItem;
+import com.example.coinscounter.model.CoinResults;
 import com.example.coinscounter.viewmodel.ResultsActivityViewModel;
 
 import java.util.List;
@@ -45,19 +46,18 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         progressBar = findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
 
-        viewModel.getCoinCardItems().observe(this, new Observer<List<CoinCardItem>>() {
+        viewModel.getCoinResults().observe(this, new Observer<CoinResults>() {
             @Override
-            public void onChanged(List<CoinCardItem> cardList) {
-                coinCardItems = cardList;
-                adapter.setCoins(cardList);
+            public void onChanged(CoinResults coinResults) {
+                coinCardItems = coinResults.getCoinCardItems();
+                adapter.setCoins(coinCardItems);
+
+                sumTextView.setText(coinResults.getValueSum());
+
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 sumTextView.setVisibility(View.VISIBLE);
             }
-        });
-
-        viewModel.getValueOfCoins().observe(this, (sum) -> {
-            sumTextView.setText(sum);
         });
 
         setUpRecyclerView();

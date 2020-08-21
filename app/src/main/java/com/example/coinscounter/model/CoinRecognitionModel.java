@@ -27,15 +27,6 @@ public class CoinRecognitionModel {
         classifier = imageLabeler;
     }
 
-    public static float calculateCoinValue(List<CoinCardItem> coins) {
-        float sum = 0;
-
-        for (CoinCardItem coin : coins) {
-            sum += coin.getValue();
-        }
-        return sum;
-    }
-
     public void recognizeCoins(List<Bitmap> croppedCoinsList, CoinRecognitionCallback callback) {
         for (Bitmap coin : croppedCoinsList) {
             Bitmap scaledCoinBitmap = Bitmap.createScaledBitmap(coin, 150, 150, false);

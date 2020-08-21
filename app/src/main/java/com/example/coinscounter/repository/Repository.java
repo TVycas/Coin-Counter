@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.CoinRecognitionModel;
+import com.example.coinscounter.model.CoinResults;
 import com.example.coinscounter.utills.ImageProcessor;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +24,10 @@ public class Repository {
     private CoinRecognitionModel coinRecognitionModel;
     private ImageProcessor imageProcessor;
     private List<Bitmap> croppedCoinsList;
+    private List<CoinCardItem> coinCardItems;
 
     private MutableLiveData<Integer> numOfSelectedCoins = new MutableLiveData<>();
-    private MutableLiveData<List<CoinCardItem>> coinCardItems = new MutableLiveData<>();
-    private MutableLiveData<Float> valueOfCoins = new MutableLiveData<>();
+    private MutableLiveData<CoinResults> coinResults = new MutableLiveData<>();
     private MutableLiveData<Bitmap> imageToDisplay = new MutableLiveData<>();
 
     private static final String TAG = Repository.class.getName();
@@ -39,12 +42,10 @@ public class Repository {
         return imageToDisplay;
     }
 
-    public LiveData<List<CoinCardItem>> getCoinCardItems() {
-        return coinCardItems;
-    }
-
-    public LiveData<Float> getValueOfCoins() {
-        return valueOfCoins;
+    private static String formatValueFloatToString(float value) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return df.format(value) + " €";
     }
 
     public LiveData<Integer> getNumOfSelectedCoins() {
@@ -62,6 +63,22 @@ public class Repository {
         });
     }
 
+    public static float calculateCoinsValue(List<CoinCardItem> coins) {
+        float sum = 0;
+
+        if (coins != null) {
+            for (CoinCardItem coin : coins) {
+                sum += coin.getValue();
+            }
+        }
+
+        return sum;
+    }
+
+    public LiveData<CoinResults> getCoinResults() {
+        return coinResults;
+    }
+
     public void recognizeCoins() {
         coinRecognitionModel.recognizeCoins(croppedCoinsList, new CoinRecognitionModel.CoinRecognitionCallback() {
             private List<CoinCardItem> returnedCoinCardItems = new ArrayList<>();
@@ -77,34 +94,26 @@ public class Repository {
 
                 if (returnedCoinCardItems.size() + noPredictionCounter == croppedCoinsList.size()) {
                     Log.i(TAG, "onPrediction: Setting " + returnedCoinCardItems.size() + " predicted values of coins out of " + croppedCoinsList.size());
-                    coinCardItems.setValue(returnedCoinCardItems);
-
-                    calculateCoinValueSum();
+                    coinCardItems = returnedCoinCardItems;
+                    setNewCoinResults();
                 }
             }
         });
     }
 
-    private void calculateCoinValueSum() {
-        if (coinCardItems.getValue() != null) {
-            valueOfCoins.setValue(CoinRecognitionModel.calculateCoinValue(coinCardItems.getValue()));
-        } else {
-            Log.i(TAG, "calculateCoinValueSum: set sum to 0");
-        }
+    private void setNewCoinResults() {
+        float floatSum = calculateCoinsValue(coinCardItems);
+        String formattedSum = formatValueFloatToString(floatSum);
+        coinResults.setValue(new CoinResults(coinCardItems, formattedSum));
     }
 
     public void updateCoinCard(CoinCardItem coinCardItem, int position) {
-        List<CoinCardItem> newCoinList = coinCardItems.getValue();
-
-        newCoinList.set(position, coinCardItem);
-        coinCardItems.setValue(newCoinList);
-        calculateCoinValueSum();
+        coinCardItems.set(position, coinCardItem);
+        setNewCoinResults();
     }
 
     public void deleteCoinCardItem(int position) {
-        List<CoinCardItem> newCoinList = coinCardItems.getValue();
-
-        newCoinList.remove(position);
-        coinCardItems.setValue(newCoinList);
+        coinCardItems.remove(position);
+        setNewCoinResults();
     }
 }
