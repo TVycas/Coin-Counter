@@ -78,14 +78,18 @@ public class Repository {
                 if (returnedCoinCardItems.size() + noPredictionCounter == croppedCoinsList.size()) {
                     Log.i(TAG, "onPrediction: Setting " + returnedCoinCardItems.size() + " predicted values of coins out of " + croppedCoinsList.size());
                     coinCardItems.setValue(returnedCoinCardItems);
+
+                    calculateCoinValueSum();
                 }
             }
         });
+    }
 
+    private void calculateCoinValueSum() {
         if (coinCardItems.getValue() != null) {
             valueOfCoins.setValue(CoinRecognitionModel.calculateCoinValue(coinCardItems.getValue()));
         } else {
-            valueOfCoins.setValue(0f);
+            Log.i(TAG, "calculateCoinValueSum: set sum to 0");
         }
     }
 
@@ -94,6 +98,7 @@ public class Repository {
 
         newCoinList.set(position, coinCardItem);
         coinCardItems.setValue(newCoinList);
+        calculateCoinValueSum();
     }
 
     public void deleteCoinCardItem(int position) {
