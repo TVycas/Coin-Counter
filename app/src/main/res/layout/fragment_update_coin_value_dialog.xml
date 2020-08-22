@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".ui.UpdateCoinValueDialogFragment">
 
     <ImageView
         android:id="@+id/coin_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         tools:src="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/coin_value_textView"
-        android:layout_width="81dp"
-        android:layout_height="78dp"
-        android:layout_below="@id/coin_image"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:text="0.5" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="60dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/sub_value_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignTop="@id/coin_value_textView"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="50dp"
-        android:layout_toStartOf="@id/coin_value_textView"
-        android:text="-" />
+        <Button
+            android:id="@+id/sub_value_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="-" />
 
-    <Button
-        android:id="@+id/add_value_button"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignTop="@id/coin_value_textView"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="15dp"
-        android:layout_toEndOf="@id/coin_value_textView"
-        android:text="+" />
+        <TextView
+            android:id="@+id/coin_value_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="0.5" />
+
+        <Button
+            android:id="@+id/add_value_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="+" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/info_textView"
-        android:layout_width="200dp"
-        android:layout_height="34dp"
-        android:layout_below="@id/coin_value_textView"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="60dp"
         android:gravity="center"
-        android:text="Please use the buttons to set the correct value of the coin" />
+        android:text="@string/update_coin_help_message" />
 
-</RelativeLayout>
+</LinearLayout>

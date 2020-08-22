@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="5dp">
+    android:layout_marginBottom="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
+        android:layout_marginVertical="5dp"
         android:gravity="center_vertical"
         android:padding="5dp">
 
@@ -16,7 +16,6 @@
             android:id="@+id/coin_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:padding="2dp"
             tools:srcCompat="@android:drawable/ic_notification_overlay" />
 
         <TextView
@@ -24,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Line 1"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
