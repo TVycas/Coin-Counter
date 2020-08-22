@@ -9,10 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.CoinRecognitionModel;
 import com.example.coinscounter.model.CoinResults;
+import com.example.coinscounter.utills.EuroCoins;
 import com.example.coinscounter.utills.ImageProcessor;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,12 +41,6 @@ public class Repository {
         return imageToDisplay;
     }
 
-    private static String formatValueFloatToString(float value) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-        return df.format(value) + " €";
-    }
-
     public LiveData<Integer> getNumOfSelectedCoins() {
         return numOfSelectedCoins;
     }
@@ -63,7 +56,7 @@ public class Repository {
         });
     }
 
-    public static float calculateCoinsValue(List<CoinCardItem> coins) {
+    public static float sumCoinsValues(List<CoinCardItem> coins) {
         float sum = 0;
 
         if (coins != null) {
@@ -102,8 +95,8 @@ public class Repository {
     }
 
     private void setNewCoinResults() {
-        float floatSum = calculateCoinsValue(coinCardItems);
-        String formattedSum = formatValueFloatToString(floatSum);
+        float floatSum = sumCoinsValues(coinCardItems);
+        String formattedSum = EuroCoins.formatFloatValueToEuroString(floatSum);
         coinResults.setValue(new CoinResults(coinCardItems, formattedSum));
     }
 

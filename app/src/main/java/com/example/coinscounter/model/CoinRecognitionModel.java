@@ -28,8 +28,8 @@ public class CoinRecognitionModel {
     }
 
     public void recognizeCoins(List<Bitmap> croppedCoinsList, CoinRecognitionCallback callback) {
-        for (Bitmap coin : croppedCoinsList) {
-            Bitmap scaledCoinBitmap = Bitmap.createScaledBitmap(coin, 150, 150, false);
+        for (Bitmap coinBitmap : croppedCoinsList) {
+            Bitmap scaledCoinBitmap = Bitmap.createScaledBitmap(coinBitmap, 150, 150, false);
             int rotationDegree = 0;
             InputImage image = InputImage.fromBitmap(scaledCoinBitmap, rotationDegree);
 
@@ -43,7 +43,7 @@ public class CoinRecognitionModel {
                                 int index = labels.get(0).getIndex();
 
                                 Log.d(TAG, "onSuccess: text: " + predictedClass + "; confidence: " + confidence + "; index: " + index);
-                                CoinCardItem coinCardItem = new CoinCardItem(coin, predictedClass, EuroCoins.stringToFloatMap.get(predictedClass));
+                                CoinCardItem coinCardItem = new CoinCardItem(coinBitmap, predictedClass, EuroCoins.mapRecognizedStringToFloatValue(predictedClass));
                                 callback.onPrediction(coinCardItem);
                             } else {
                                 callback.onPrediction(null);

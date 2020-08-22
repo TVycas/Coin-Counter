@@ -31,7 +31,7 @@ public class CoinCardItem {
         int currentPosition = EuroCoins.floatList.indexOf(value);
         if (currentPosition > 0) {
             value = EuroCoins.floatList.get(currentPosition - 1);
-            name = EuroCoins.floatToStringMap.get(value);
+            name = EuroCoins.mapFloatValueToEuroString(value);
         }
     }
 
@@ -39,7 +39,7 @@ public class CoinCardItem {
         int currentPosition = EuroCoins.floatList.indexOf(value);
         if (currentPosition < EuroCoins.floatList.size() - 1) {
             value = EuroCoins.floatList.get(currentPosition + 1);
-            name = EuroCoins.floatToStringMap.get(value);
+            name = EuroCoins.mapFloatValueToEuroString(value);
         }
     }
 }
