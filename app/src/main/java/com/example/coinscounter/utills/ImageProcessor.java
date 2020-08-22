@@ -1,7 +1,6 @@
 package com.example.coinscounter.utills;
 
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.Log;
 
 import org.opencv.android.Utils;
@@ -12,9 +11,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -31,6 +27,7 @@ public class ImageProcessor {
     private static final String TAG = ImageProcessor.class.getName();
     //TODO capitalize
     private final int imageWidth;
+    // TODO use ExecutorService to shutdown process
     private final Executor executor;
 
     @Inject
@@ -47,13 +44,6 @@ public class ImageProcessor {
                 Mat circles = findCoinCircles(lowerThreshold, minDist, resizedImageMat.clone());
                 Bitmap bitmapToDisplay = getBitmapToDisplay(resizedImageMat.clone(), circles);
                 List<Bitmap> croppedCoinsList = getCroppedCoinsList(resizedImageMat.clone(), circles);
-
-//                try {
-//                    saveCoins(croppedCoinsList);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
                 callback.onComplete(bitmapToDisplay, croppedCoinsList);
             }
         });
@@ -104,30 +94,30 @@ public class ImageProcessor {
         return croppedCoinsList;
     }
 
-    public void saveCoins(List<Bitmap> croppedCoinsList) throws IOException {
-        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                "/CoinsCounter/SavedCoins";
-
-        Log.d(TAG, file_path);
-        File dir = new File(file_path);
-
-        if (!dir.exists())
-            dir.mkdirs();
-
-        FileOutputStream fOut = null;
-
-        for (Bitmap croppedCoin : croppedCoinsList) {
-            //Save the cropped coin bitmap to disk
-            File file = new File(dir, "CroppedCoin_" + System.currentTimeMillis() + ".png");
-            fOut = new FileOutputStream(file);
-            croppedCoin.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-        }
-
-        if (fOut != null)
-            fOut.flush();
-
-        fOut.close();
-    }
+//    public void saveCoins(List<Bitmap> croppedCoinsList) throws IOException {
+//        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() +
+//                "/CoinsCounter/SavedCoins";
+//
+//        Log.d(TAG, file_path);
+//        File dir = new File(file_path);
+//
+//        if (!dir.exists())
+//            dir.mkdirs();
+//
+//        FileOutputStream fOut = null;
+//
+//        for (Bitmap croppedCoin : croppedCoinsList) {
+//            //Save the cropped coin bitmap to disk
+//            File file = new File(dir, "CroppedCoin_" + System.currentTimeMillis() + ".png");
+//            fOut = new FileOutputStream(file);
+//            croppedCoin.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+//        }
+//
+//        if (fOut != null)
+//            fOut.flush();
+//
+//        fOut.close();
+//    }
 
     private Bitmap getBitmapToDisplay(Mat matToDisplay, Mat circles) {
         //Draw red circles round the found coins

@@ -10,76 +10,171 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
         android:layout_marginTop="30dp"
-        android:contentDescription="Image of coins, where selected coins have red borders" />
-
-    <TextView
-        android:id="@+id/threshTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:visibility="invisible"
-        android:text="Tresh Text View"
-        android:layout_marginTop="10dp"/>
-
-    <SeekBar
-        android:id="@+id/threshSeekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="270dp"
-        android:layout_height="30dp"
-        android:visibility="invisible"
-        android:layout_marginTop="10dp" />
-
-    <TextView
-        android:id="@+id/distTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-        android:visibility="invisible"
-        android:layout_marginTop="10dp"
-        android:text="Dist Text View" />
-
-    <SeekBar
-        android:id="@+id/distSeekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="270dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="10dp"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/calculateSum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="calculateSum"
-        android:text="Calculate Sum"
-        android:visibility="invisible" />
+        android:layout_weight="50"
+        android:background="@drawable/image_border"
+        android:contentDescription="Image of coins, where selected coins have red borders"
+        android:elevation="5dp"
+        android:visibility="visible"
+        tools:srcCompat="@tools:sample/backgrounds/scenic[2]" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/takePictureButton"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="openCamera"
-            android:text="Take picture" />
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="50dp">
 
-        <Button
-            android:id="@+id/loadImgButton"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/dec_thresh"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="decThreshold"
+                android:text="-"
+                android:textSize="25sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="Threshold for coins" />
+
+            <Button
+                android:id="@+id/inc_thresh"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="incThreshold"
+                android:text="+"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="loadImage"
-            android:text="Load image" />
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="50dp">
 
+            <Button
+                android:id="@+id/dec_dist"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="decDistance"
+                android:text="-"
+                android:textSize="25sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="Distance allowed between coins" />
+
+            <Button
+                android:id="@+id/inc_dist"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="incDistance"
+                android:text="+"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/takePictureButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_for_shadows"
+                android:onClick="openCamera"
+                android:paddingHorizontal="10dp"
+                android:text="Take picture"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/loadImgButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:background="@drawable/rect_for_shadows"
+                android:onClick="loadImage"
+                android:paddingHorizontal="10dp"
+                android:text="Load image"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/calculateSum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_for_shadows"
+                android:clickable="false"
+                android:onClick="calculateSum"
+                android:paddingHorizontal="10dp"
+                android:text="Calculate Sum"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
     </LinearLayout>
 
-
 </LinearLayout>
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/threshTextView"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="50dp"-->
+    <!--            android:text="Tresh Text View"-->
+    <!--            android:textColor="@android:color/black"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:visibility="visible" />-->
+
+    <!--        <SeekBar-->
+    <!--            android:id="@+id/threshSeekBar"-->
+    <!--            style="@style/Widget.AppCompat.SeekBar.Discrete"-->
+    <!--            android:layout_width="270dp"-->
+    <!--            android:layout_height="30dp"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:visibility="visible" />-->
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/distTextView"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:gravity="center"-->
+    <!--            android:text="Dist Text View"-->
+    <!--            android:textColor="@android:color/black"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:visibility="visible" />-->
+
+    <!--        <SeekBar-->
+    <!--            android:id="@+id/distSeekBar"-->
+    <!--            style="@style/Widget.AppCompat.SeekBar.Discrete"-->
+    <!--            android:layout_width="270dp"-->
+    <!--            android:layout_height="30dp"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:visibility="visible" />-->

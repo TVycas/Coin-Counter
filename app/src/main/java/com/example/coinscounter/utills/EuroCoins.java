@@ -35,6 +35,7 @@ public final class EuroCoins {
     ));
 
     public static String mapFloatValueToEuroString(Float value) {
+        // TODO get context here somehow
         Resources res = Resources.getSystem();
         String[] stringValues = res.getStringArray(R.array.euro_values_array);
         if (floatList.contains(value)) {

@@ -51,17 +51,20 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
             public void onChanged(CoinResults coinResults) {
                 coinCardItems = coinResults.getCoinCardItems();
                 adapter.setCoins(coinCardItems);
-
                 sumTextView.setText(getString(R.string.total_value, coinResults.getValueSum()));
 
-                progressBar.setVisibility(View.GONE);
-                sumTextView.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
-                sumTextView.setVisibility(View.VISIBLE);
+                makeResultsVisible();
             }
         });
 
         setUpRecyclerView();
+    }
+
+    private void makeResultsVisible() {
+        progressBar.setVisibility(View.GONE);
+        sumTextView.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
+        sumTextView.setVisibility(View.VISIBLE);
     }
 
     private void setUpRecyclerView() {

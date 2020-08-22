@@ -1,5 +1,6 @@
 package com.example.coinscounter.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -21,9 +22,11 @@ import javax.inject.Singleton;
 public class CoinRecognitionModel {
     private static final String TAG = CoinRecognitionModel.class.getName();
     private ImageLabeler classifier;
+    private Context context;
 
     @Inject
-    public CoinRecognitionModel(ImageLabeler imageLabeler) {
+    public CoinRecognitionModel(ImageLabeler imageLabeler, Context context) {
+        this.context = context;
         classifier = imageLabeler;
     }
 

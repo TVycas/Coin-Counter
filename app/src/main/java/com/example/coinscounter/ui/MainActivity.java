@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -48,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityViewModel viewModel;
     private Button calculateSumBtn;
     private ImageView imgView;
-    private TextView threshText;
-    private SeekBar threshSeek;
-    private TextView distText;
-    private SeekBar distSeek;
+    private Button incThresh;
+    private Button decThresh;
+    private Button incDist;
+    private Button decDist;
 
     private String photoFileAbsolutePath;
 
@@ -62,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
         calculateSumBtn = findViewById(R.id.calculateSum);
         imgView = findViewById(R.id.imageView);
-        threshText = findViewById(R.id.threshTextView);
-        threshSeek = findViewById(R.id.threshSeekBar);
-        distText = findViewById(R.id.distTextView);
-        distSeek = findViewById(R.id.distSeekBar);
+        incThresh = findViewById(R.id.inc_thresh);
+        decThresh = findViewById(R.id.dec_thresh);
+        incDist = findViewById(R.id.inc_dist);
+        decDist = findViewById(R.id.dec_dist);
 
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
@@ -85,65 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
         OpenCVLoader.initDebug();
 
-        setUpSeekBars();
-    }
-
-    private void setUpSeekBars() {
-        threshSeek.setMax(100);
-        threshSeek.setProgress(40);
-
-        distSeek.setMax(150);
-        distSeek.setProgress(50);
-
-        threshSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                threshText.setText("Threshold: " + threshSeek.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {/* no-op */}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.processCoinImage(threshSeek.getProgress(), distSeek.getProgress());
-            }
-        });
-
-        distSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                distText.setText("MinDist: " + distSeek.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {/* no-op */}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                viewModel.processCoinImage(distSeek.getProgress(), distSeek.getProgress());
-            }
-        });
-    }
-
-    private void setSeekVisibility(boolean visible) {
-        if (visible) {
-            threshSeek.setVisibility(View.VISIBLE);
-            threshText.setVisibility(View.VISIBLE);
-            threshText.setText("Threshold: " + threshSeek.getProgress());
-            distSeek.setVisibility(View.VISIBLE);
-            distText.setVisibility(View.VISIBLE);
-            distText.setText("MinDist: " + distSeek.getProgress());
-
-            viewModel.processCoinImage(threshSeek.getProgress(), distSeek.getProgress());
-        } else {
-            // TODO do I need to make theses invisible?
-            imgView.setVisibility(View.GONE);
-            threshSeek.setVisibility(View.INVISIBLE);
-            threshText.setVisibility(View.INVISIBLE);
-            distSeek.setVisibility(View.INVISIBLE);
-            distText.setVisibility(View.INVISIBLE);
-        }
     }
 
     public void loadImage(View view) {
@@ -154,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpLoadingImage() {
-        setSeekVisibility(false);
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, GALLERY_PICK_IMAGE);
     }
@@ -162,13 +100,8 @@ public class MainActivity extends AppCompatActivity {
     public void openCamera(View view) {
         if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
-            setUpTakingPicture();
+            dispatchTakePictureIntent();
         }
-    }
-
-    private void setUpTakingPicture() {
-        setSeekVisibility(false);
-        dispatchTakePictureIntent();
     }
 
     @Override
@@ -177,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             case PERMISSION_TO_WRITE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setUpTakingPicture();
+                    dispatchTakePictureIntent();
                 } else {
                     Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
                 }
@@ -237,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             viewModel.setImageOfCoins(photoFileAbsolutePath);
-            setSeekVisibility(true);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
@@ -254,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             viewModel.setImageOfCoins(photoInputStream);
-            setSeekVisibility(true);
 
         } else if (requestCode == GALLERY_PICK_IMAGE) {
             Toast.makeText(this, "Picture wasn't chosen!", Toast.LENGTH_SHORT).show();
@@ -264,5 +195,21 @@ public class MainActivity extends AppCompatActivity {
     public void calculateSum(View view) {
         Intent intent = new Intent(this, ResultsActivity.class);
         startActivity(intent);
+    }
+
+    public void decThreshold(View view) {
+        viewModel.decThreshold();
+    }
+
+    public void incThreshold(View view) {
+        viewModel.incThreshold();
+    }
+
+    public void decDistance(View view) {
+        viewModel.decDistance();
+    }
+
+    public void incDistance(View view) {
+        viewModel.incDistance();
     }
 }

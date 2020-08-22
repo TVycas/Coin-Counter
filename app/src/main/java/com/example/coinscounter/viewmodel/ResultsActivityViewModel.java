@@ -8,6 +8,9 @@ import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.CoinResults;
 import com.example.coinscounter.repository.Repository;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class ResultsActivityViewModel extends ViewModel {
     private Repository repository;
     private LiveData<CoinResults> coinResults;
