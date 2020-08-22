@@ -20,7 +20,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".ui.ResultsActivity" />
+        <activity
+            android:name=".ui.ResultsActivity"
+            android:parentActivityName="ui.MainActivity" />
 
         <activity android:name=".ui.MainActivity">
             <intent-filter>
