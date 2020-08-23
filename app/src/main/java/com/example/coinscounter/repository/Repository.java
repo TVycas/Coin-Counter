@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.coinscounter.model.CoinCardItem;
 import com.example.coinscounter.model.CoinRecognitionModel;
 import com.example.coinscounter.model.CoinResults;
-import com.example.coinscounter.utills.EuroCoins;
+import com.example.coinscounter.utills.CoinMapper;
 import com.example.coinscounter.utills.ImageProcessor;
 
 import java.util.ArrayList;
@@ -20,8 +20,9 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Repository {
-    private CoinRecognitionModel coinRecognitionModel;
-    private ImageProcessor imageProcessor;
+    private final CoinMapper coinMapper;
+    private final CoinRecognitionModel coinRecognitionModel;
+    private final ImageProcessor imageProcessor;
     private List<Bitmap> croppedCoinsList;
     private List<CoinCardItem> coinCardItems;
 
@@ -32,9 +33,10 @@ public class Repository {
     private static final String TAG = Repository.class.getName();
 
     @Inject
-    public Repository(ImageProcessor imageProcessor, CoinRecognitionModel model) {
+    public Repository(ImageProcessor imageProcessor, CoinRecognitionModel model, CoinMapper coinMapper) {
         this.coinRecognitionModel = model;
         this.imageProcessor = imageProcessor;
+        this.coinMapper = coinMapper;
     }
 
     public LiveData<Bitmap> getImageToDisplay() {
@@ -56,7 +58,7 @@ public class Repository {
         });
     }
 
-    public static float sumCoinsValues(List<CoinCardItem> coins) {
+    public static float sumCoinValues(List<CoinCardItem> coins) {
         float sum = 0;
 
         if (coins != null) {
@@ -95,8 +97,8 @@ public class Repository {
     }
 
     private void setNewCoinResults() {
-        float floatSum = sumCoinsValues(coinCardItems);
-        String formattedSum = EuroCoins.formatFloatValueToEuroString(floatSum);
+        float floatSum = sumCoinValues(coinCardItems);
+        String formattedSum = coinMapper.formatFloatValueSumToString(floatSum);
         coinResults.setValue(new CoinResults(coinCardItems, formattedSum));
     }
 

@@ -2,17 +2,19 @@ package com.example.coinscounter.model;
 
 import android.graphics.Bitmap;
 
-import com.example.coinscounter.utills.EuroCoins;
+import com.example.coinscounter.utills.CoinMapper;
 
 public class CoinCardItem {
     private Bitmap imageResource;
     private String name;
     private float value;
+    private CoinMapper coinMapper;
 
-    public CoinCardItem(Bitmap imageResource, String name, float value) {
+    public CoinCardItem(Bitmap imageResource, String predictedClass, CoinMapper coinMapper) {
+        this.value = coinMapper.mapPredictedClassToFloatValue(predictedClass);
+        this.name = coinMapper.mapFloatValueToString(value);
         this.imageResource = imageResource;
-        this.name = name;
-        this.value = value;
+        this.coinMapper = coinMapper;
     }
 
     public Bitmap getImageBitmap() {
@@ -28,18 +30,12 @@ public class CoinCardItem {
     }
 
     public void subtractOne() {
-        int currentPosition = EuroCoins.floatList.indexOf(value);
-        if (currentPosition > 0) {
-            value = EuroCoins.floatList.get(currentPosition - 1);
-            name = EuroCoins.mapFloatValueToEuroString(value);
-        }
+        value = coinMapper.decrementValue(value);
+        name = coinMapper.mapFloatValueToString(value);
     }
 
     public void addOne() {
-        int currentPosition = EuroCoins.floatList.indexOf(value);
-        if (currentPosition < EuroCoins.floatList.size() - 1) {
-            value = EuroCoins.floatList.get(currentPosition + 1);
-            name = EuroCoins.mapFloatValueToEuroString(value);
-        }
+        value = coinMapper.incrementValue(value);
+        name = coinMapper.mapFloatValueToString(value);
     }
 }

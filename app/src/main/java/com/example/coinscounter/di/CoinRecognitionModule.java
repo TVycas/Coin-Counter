@@ -3,7 +3,8 @@ package com.example.coinscounter.di;
 import android.app.Application;
 import android.util.DisplayMetrics;
 
-import com.example.coinscounter.model.CoinRecognitionModel;
+import com.example.coinscounter.utills.CoinMapper;
+import com.example.coinscounter.utills.EuroCoinMapper;
 import com.example.coinscounter.utills.ImageProcessor;
 import com.google.mlkit.vision.label.ImageLabeler;
 import com.google.mlkit.vision.label.ImageLabeling;
@@ -33,7 +34,7 @@ public class CoinRecognitionModule {
 
     @Provides
     @Singleton
-    public static CoinRecognitionModel provideCoinRecognitionModel() {
+    public static ImageLabeler provideImageLabeler() {
         AutoMLImageLabelerLocalModel localModel =
                 new AutoMLImageLabelerLocalModel.Builder()
                         .setAssetFilePath("tflite_models/manifest.json")
@@ -44,8 +45,12 @@ public class CoinRecognitionModule {
                         .setConfidenceThreshold(0.35f)
                         .build();
 
-        ImageLabeler imageLabeler = ImageLabeling.getClient(autoMLImageLabelerOptions);
+        return ImageLabeling.getClient(autoMLImageLabelerOptions);
+    }
 
-        return new CoinRecognitionModel(imageLabeler);
+    @Provides
+    @Singleton
+    public static CoinMapper provideEuroCoinMapper(Application application) {
+        return new EuroCoinMapper(application.getApplicationContext());
     }
 }
