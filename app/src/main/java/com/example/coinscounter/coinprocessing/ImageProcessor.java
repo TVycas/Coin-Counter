@@ -1,4 +1,4 @@
-package com.example.coinscounter.utills;
+package com.example.coinscounter.coinprocessing;
 
 import android.graphics.Bitmap;
 import android.util.Log;

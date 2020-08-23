@@ -3,9 +3,9 @@ package com.example.coinscounter.di;
 import android.app.Application;
 import android.util.DisplayMetrics;
 
-import com.example.coinscounter.utills.CoinMapper;
-import com.example.coinscounter.utills.EuroCoinMapper;
-import com.example.coinscounter.utills.ImageProcessor;
+import com.example.coinscounter.coinprocessing.ImageProcessor;
+import com.example.coinscounter.model.CoinMapper;
+import com.example.coinscounter.model.EuroCoinMapper;
 import com.google.mlkit.vision.label.ImageLabeler;
 import com.google.mlkit.vision.label.ImageLabeling;
 import com.google.mlkit.vision.label.automl.AutoMLImageLabelerLocalModel;
@@ -22,7 +22,7 @@ import dagger.hilt.android.components.ApplicationComponent;
 
 @Module
 @InstallIn(ApplicationComponent.class)
-public class CoinRecognitionModule {
+public class CoinProcessingModule {
 
     @Provides
     @Singleton

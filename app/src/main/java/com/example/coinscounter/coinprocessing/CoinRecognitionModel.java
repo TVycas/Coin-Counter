@@ -1,11 +1,12 @@
-package com.example.coinscounter.model;
+package com.example.coinscounter.coinprocessing;
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.coinscounter.utills.CoinMapper;
+import com.example.coinscounter.model.CoinCardItem;
+import com.example.coinscounter.model.CoinMapper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.vision.common.InputImage;

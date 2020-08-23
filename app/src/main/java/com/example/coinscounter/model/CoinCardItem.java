@@ -2,8 +2,6 @@ package com.example.coinscounter.model;
 
 import android.graphics.Bitmap;
 
-import com.example.coinscounter.utills.CoinMapper;
-
 public class CoinCardItem {
     private Bitmap imageResource;
     private String name;

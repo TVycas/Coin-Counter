@@ -6,11 +6,11 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.coinscounter.coinprocessing.CoinRecognitionModel;
+import com.example.coinscounter.coinprocessing.ImageProcessor;
 import com.example.coinscounter.model.CoinCardItem;
-import com.example.coinscounter.model.CoinRecognitionModel;
+import com.example.coinscounter.model.CoinMapper;
 import com.example.coinscounter.model.CoinResults;
-import com.example.coinscounter.utills.CoinMapper;
-import com.example.coinscounter.utills.ImageProcessor;
 
 import java.util.ArrayList;
 import java.util.List;

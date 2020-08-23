@@ -1,4 +1,4 @@
-package com.example.coinscounter.utills;
+package com.example.coinscounter.model;
 
 import android.content.Context;
 

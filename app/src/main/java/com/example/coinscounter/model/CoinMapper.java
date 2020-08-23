@@ -1,4 +1,4 @@
-package com.example.coinscounter.utills;
+package com.example.coinscounter.model;
 
 public interface CoinMapper {
     float incrementValue(float value);
