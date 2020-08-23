@@ -2,6 +2,9 @@ package com.example.coinscounter.model;
 
 import android.graphics.Bitmap;
 
+/**
+ * A class for storing information about a single coin.
+ */
 public class CoinCardItem {
     private Bitmap imageResource;
     private String name;
@@ -27,12 +30,12 @@ public class CoinCardItem {
         return value;
     }
 
-    public void subtractOne() {
+    public void decrementValue() {
         value = coinMapper.decrementValue(value);
         name = coinMapper.mapFloatValueToString(value);
     }
 
-    public void addOne() {
+    public void incrementValue() {
         value = coinMapper.incrementValue(value);
         name = coinMapper.mapFloatValueToString(value);
     }

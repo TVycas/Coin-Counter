@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
+/**
+ * Implementation of CoinMapper to work with Euro coins.
+ */
 public class EuroCoinMapper implements CoinMapper {
 
     private final LinkedHashMap<String, Float> stringToFloatMap = new LinkedHashMap<String, Float>() {{
@@ -69,9 +72,9 @@ public class EuroCoinMapper implements CoinMapper {
     }
 
     @Override
-    public Float mapPredictedClassToFloatValue(String euroString) {
-        if (stringToFloatMap.containsKey(euroString)) {
-            return stringToFloatMap.get(euroString);
+    public Float mapPredictedClassToFloatValue(String predictedClass) {
+        if (stringToFloatMap.containsKey(predictedClass)) {
+            return stringToFloatMap.get(predictedClass);
         } else {
             return 0f;
         }

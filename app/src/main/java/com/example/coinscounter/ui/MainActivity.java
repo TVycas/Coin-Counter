@@ -46,10 +46,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_TO_READ_STORAGE = 3;
 
     private MainActivityViewModel viewModel;
+    private String photoFileAbsolutePath;
+
     private Button calculateSumBtn;
     private ImageView imgView;
+    private LinearLayout thresholdUpdateBar;
+    private LinearLayout distUpdateBar;
 
-    private String photoFileAbsolutePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,18 +61,17 @@ public class MainActivity extends AppCompatActivity {
 
         calculateSumBtn = findViewById(R.id.calculate_sum_btn);
         imgView = findViewById(R.id.image_view);
-        LinearLayout thresholdUpdateBar = findViewById(R.id.thresh_update_bar);
-        LinearLayout distUpdateBar = findViewById(R.id.dist_update_bar);
+        thresholdUpdateBar = findViewById(R.id.thresh_update_bar);
+        distUpdateBar = findViewById(R.id.dist_update_bar);
 
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         viewModel.getImageToDisplay().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
-
-            thresholdUpdateBar.setVisibility(View.VISIBLE);
-            distUpdateBar.setVisibility(View.VISIBLE);
+            setParamBtnsVisibility(true);
         });
 
+        // Enable calculation button if there's at least one coin selected
         viewModel.getNumOfSelectedCoins().observe(this, (numOfSelectedCoins) -> {
             if (numOfSelectedCoins > 0) {
                 calculateSumBtn.setEnabled(true);
@@ -79,12 +81,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
         OpenCVLoader.initDebug();
+    }
 
+    private void setParamBtnsVisibility(boolean visible) {
+        if (visible) {
+            thresholdUpdateBar.setVisibility(View.VISIBLE);
+            distUpdateBar.setVisibility(View.VISIBLE);
+        } else {
+            thresholdUpdateBar.setVisibility(View.INVISIBLE);
+            distUpdateBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void loadImage(View view) {
+        // If we have the permission, dispatch intent
         if (PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
                 "Read external storage permission needed", PERMISSION_TO_READ_STORAGE)) {
+            setParamBtnsVisibility(false);
             dispatchOpenGalleryIntent();
         }
     }
@@ -117,12 +130,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openCamera(View view) {
+        // If we have the permission, dispatch intent
         if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
+            setParamBtnsVisibility(false);
             dispatchTakePictureIntent();
         }
     }
 
+    /**
+     * Start the intent for photo capture.
+     */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -141,6 +159,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a file to store an image.
+     *
+     * @return a File object to store the image, or null if the file creation wasn't successful.
+     */
     private File createImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -165,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // The image is stored at photoFileAbsolutePath, if the capture was successful
             viewModel.setImageOfCoins(photoFileAbsolutePath);
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {

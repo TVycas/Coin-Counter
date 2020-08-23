@@ -50,8 +50,10 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
         return coinCardList == null ? 0 : coinCardList.size();
     }
 
+    /**
+     * An interface for in click events
+     */
     public interface OnItemClickListener {
-
         void onItemClick(int coinCardItemPosition);
     }
 

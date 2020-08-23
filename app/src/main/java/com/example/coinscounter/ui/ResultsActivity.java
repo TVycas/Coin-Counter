@@ -25,12 +25,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ResultsActivity extends AppCompatActivity implements UpdateCoinValueDialogFragment.UpdateCoinDialogListener {
 
-    private static final String TAG = ResultsActivity.class.getName();
     private ResultsActivityViewModel viewModel;
+    private List<CoinCardItem> coinCardItems;
+
     private RecyclerView recyclerView;
     private TextView sumTextView;
     private CoinCardAdapter adapter;
-    private List<CoinCardItem> coinCardItems;
     private ProgressBar progressBar;
     private View divider;
 
@@ -60,6 +60,9 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         setUpRecyclerView();
     }
 
+    /**
+     * When the activity launches, the only view that's not GONE is the progress bar. This method turn the views to show the data visible.
+     */
     private void makeResultsVisible() {
         progressBar.setVisibility(View.GONE);
         sumTextView.setVisibility(View.VISIBLE);
@@ -72,6 +75,7 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         adapter = new CoinCardAdapter(new CoinCardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int coinCardItemPosition) {
+                // Starts a Dialog for the user to update the coin value.
                 DialogFragment newFragment = new UpdateCoinValueDialogFragment(coinCardItems.get(coinCardItemPosition), coinCardItemPosition);
                 newFragment.show(getSupportFragmentManager(), "update_coin_value");
             }

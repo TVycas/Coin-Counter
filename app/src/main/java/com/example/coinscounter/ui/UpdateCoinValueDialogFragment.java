@@ -22,8 +22,9 @@ import com.example.coinscounter.model.CoinCardItem;
 public class UpdateCoinValueDialogFragment extends DialogFragment {
     private final CoinCardItem coinCardItem;
     private final int coinCardItemPosition;
-    private TextView coinValueTextView;
     private UpdateCoinDialogListener listener;
+
+    private TextView coinValueTextView;
 
     public UpdateCoinValueDialogFragment(CoinCardItem coinCardItem, int coinCardItemPosition) {
         this.coinCardItem = coinCardItem;
@@ -40,6 +41,7 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
 
         View view = inflater.inflate(R.layout.fragment_update_coin_value_dialog, null);
 
+        // Set the view and add buttons as well as listeners for the buttons.
         builder.setView(view)
                 .setPositiveButton("Update Coin", new DialogInterface.OnClickListener() {
                     @Override
@@ -65,19 +67,24 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
         ImageView imageView = view.findViewById(R.id.coin_image);
         imageView.setImageBitmap(coinCardItem.getImageBitmap());
 
-        setUpButtons(view);
+        setUpControlButtons(view);
 
         return builder.create();
     }
 
-    private void setUpButtons(View view) {
+    /**
+     * Finds buttons responsible for changing value of the coin and sets listeners for their onClick.
+     *
+     * @param view The view in which the buttons are initiated.
+     */
+    private void setUpControlButtons(View view) {
         Button subButton = view.findViewById(R.id.sub_value_button);
         Button addButton = view.findViewById(R.id.add_value_button);
 
         subButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                coinCardItem.subtractOne();
+                coinCardItem.decrementValue();
                 updateValueTextView();
             }
         });
@@ -85,7 +92,7 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                coinCardItem.addOne();
+                coinCardItem.incrementValue();
                 updateValueTextView();
             }
         });
@@ -99,7 +106,7 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
+            // Instantiate the UpdateCoinDialogListener so we can send events to the host activity
             listener = (UpdateCoinDialogListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
@@ -108,8 +115,12 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * A simple interface to update the coin values that must be implemented by the calling activity.
+     */
     public interface UpdateCoinDialogListener {
         void onUpdateCoin(CoinCardItem coinCardItem, int coinCardItemPosition);
+
         void onDeleteCoin(int coinCardItemPosition);
     }
 

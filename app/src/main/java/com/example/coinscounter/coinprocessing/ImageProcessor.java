@@ -24,8 +24,14 @@ import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughCircles;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
+/**
+ * Uses ExecutorService to asynchronously find coins in an image using OpenCV's HoughCircles.
+ */
 public class ImageProcessor {
     private static final String TAG = ImageProcessor.class.getName();
+    /**
+     * The width, in pixels, to resize the image to.
+     */
     private final int IMAGE_WIDTH;
     private final ExecutorService EXECUTOR_SERVICE;
     private Future<?> future;
@@ -43,6 +49,14 @@ public class ImageProcessor {
         }
     }
 
+    /**
+     * Asynchronously process the image, finding the coins, making an image to display for the user and cropping each of the found coins.
+     *
+     * @param image          Image bitmap to process.
+     * @param lowerThreshold Lower threshold for HoughCircles
+     * @param minDist        Minimum distance for HoughCircles.
+     * @param callback       Callback to return the processed coins and image to display.
+     */
     public void processImage(Bitmap image, int lowerThreshold, int minDist, ImageProcessorCallback callback) {
         future = EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
@@ -78,6 +92,46 @@ public class ImageProcessor {
         });
     }
 
+    /**
+     * Converts the image to a Mat and resizes it, for further processing.
+     *
+     * @param image Bitmap to resize.
+     * @return Resized Mat of the image.
+     */
+    private Mat getResizedMat(Bitmap image) {
+        Mat src = new Mat();
+        Utils.bitmapToMat(image, src);
+
+        return resizeMat(src, (int) (src.size().width * 0.5));
+    }
+
+    /**
+     * Applies Grayscale and Gaussian Blur before running the Hough Transformation to find circles (which are hopefully coins) in the image.
+     *
+     * @param lowerThreshold Lower threshold for HoughCircles
+     * @param minDist        Minimum distance for HoughCircles.
+     * @param matOfImage     A Mat object of the image.
+     * @return A Mat describing the circles found in the image.
+     */
+    private Mat findCoinCircles(int lowerThreshold, int minDist, Mat matOfImage) {
+        Mat circles = new Mat();
+        //Converts the mat from CV_8UC4 to CV_8UC1 and applies GaussianBlur for processing
+        cvtColor(matOfImage, matOfImage, COLOR_BGR2GRAY);
+        GaussianBlur(matOfImage, matOfImage, new Size(9, 9), 3, 3);
+
+        /// Apply the Hough Transform to find the circles
+        HoughCircles(matOfImage, circles, CV_HOUGH_GRADIENT, 1, minDist, 100, lowerThreshold, 0, 0);
+
+        return circles;
+    }
+
+    /**
+     * Crops the coins out of the image.
+     *
+     * @param resizedImageMat A Mat used in the Hough Transformation
+     * @param circles         The circles found by the Hough Transformation.
+     * @return A bitmap ArrayList, where each element is a cropped coin.
+     */
     private ArrayList<Bitmap> getCroppedCoinsList(Mat resizedImageMat, Mat circles) {
         ArrayList<Bitmap> croppedCoinsList = new ArrayList<>();
         for (int i = 0; i < circles.cols(); i++) {
@@ -109,7 +163,7 @@ public class ImageProcessor {
             Bitmap croppedCoin = Bitmap.createBitmap(croppedMat.cols(), croppedMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedMat, croppedCoin);
 
-            //Save the bitmap to the list for the ML model
+            //Save the bitmap to a list
             croppedCoinsList.add(croppedCoin);
         }
 
@@ -117,6 +171,13 @@ public class ImageProcessor {
         return croppedCoinsList;
     }
 
+    /**
+     * Draws red circles around the found coins and returns a bitmap to display to the user.
+     *
+     * @param matToDisplay A Mat varsion of the image.
+     * @param circles      Circles to draw.
+     * @return A bitmap to display to the user.
+     */
     private Bitmap getBitmapToDisplay(Mat matToDisplay, Mat circles) {
         //Draw red circles round the found coins
         for (int i = 0; i < circles.cols(); i++) {
@@ -136,25 +197,13 @@ public class ImageProcessor {
         return resultBitmap;
     }
 
-    private Mat findCoinCircles(int lowerThreshold, int minDist, Mat matOfImage) {
-        Mat circles = new Mat();
-        //Converts the mat from CV_8UC4 to CV_8UC1 and applies GaussianBlur for processing
-        cvtColor(matOfImage, matOfImage, COLOR_BGR2GRAY);
-        GaussianBlur(matOfImage, matOfImage, new Size(9, 9), 3, 3);
-
-        /// Apply the Hough Transform to find the circles
-        HoughCircles(matOfImage, circles, CV_HOUGH_GRADIENT, 1, minDist, 100, lowerThreshold, 0, 0);
-
-        return circles;
-    }
-
-    private Mat getResizedMat(Bitmap image) {
-        Mat src = new Mat();
-        Utils.bitmapToMat(image, src);
-
-        return resizeMat(src, (int) (src.size().width * 0.5));
-    }
-
+    /**
+     * Resizes a Mat based in width
+     *
+     * @param mat           A Mat to resize
+     * @param newImageWidth The new image width
+     * @return Resized Mat
+     */
     private Mat resizeMat(Mat mat, int newImageWidth) {
         int adjustedHeight = newImageWidth * (int) mat.size().height / (int) mat.size().width;
         Size sz = new Size(newImageWidth, adjustedHeight);
@@ -163,6 +212,9 @@ public class ImageProcessor {
         return mat;
     }
 
+    /**
+     * An interface to return the results of the processing to the caller.
+     */
     public interface ImageProcessorCallback {
         void onComplete(Bitmap imageToDisplay, List<Bitmap> croppedCoinsList);
     }

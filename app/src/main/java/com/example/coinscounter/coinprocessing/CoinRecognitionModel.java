@@ -30,6 +30,12 @@ public class CoinRecognitionModel {
         classifier = imageLabeler;
     }
 
+    /**
+     * Issues requests to asynchronously recognize all of the coins in the provided list and uses a callback to return the predicted values in CoinCardItem objects.
+     *
+     * @param croppedCoinsList The list of coins to recognize the values of.
+     * @param callback         A callback to return CoinCardItem objects
+     */
     public void recognizeCoins(List<Bitmap> croppedCoinsList, CoinRecognitionCallback callback) {
         for (Bitmap coinBitmap : croppedCoinsList) {
             Bitmap scaledCoinBitmap = Bitmap.createScaledBitmap(coinBitmap, 150, 150, false);
@@ -44,10 +50,9 @@ public class CoinRecognitionModel {
                                 String predictedClass = labels.get(0).getText();
                                 float confidence = labels.get(0).getConfidence();
                                 int index = labels.get(0).getIndex();
-
                                 Log.v(TAG, "onSuccess: text: " + predictedClass + "; confidence: " + confidence + "; index: " + index);
-                                CoinCardItem coinCardItem = new CoinCardItem(coinBitmap, predictedClass, coinMapper);
 
+                                CoinCardItem coinCardItem = new CoinCardItem(coinBitmap, predictedClass, coinMapper);
                                 callback.onPrediction(coinCardItem);
                             } else {
                                 callback.onPrediction(null);
@@ -64,6 +69,9 @@ public class CoinRecognitionModel {
         }
     }
 
+    /**
+     * An interface to return the predictions to the caller
+     */
     public interface CoinRecognitionCallback {
         void onPrediction(CoinCardItem coinCardItem);
     }
