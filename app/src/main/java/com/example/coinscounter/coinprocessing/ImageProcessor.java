@@ -47,10 +47,32 @@ public class ImageProcessor {
         future = EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
             public void run() {
-                Mat resizedImageMat = getResizedMat(image);
-                Mat circles = findCoinCircles(lowerThreshold, minDist, resizedImageMat.clone());
-                Bitmap bitmapToDisplay = getBitmapToDisplay(resizedImageMat.clone(), circles);
-                List<Bitmap> croppedCoinsList = getCroppedCoinsList(resizedImageMat.clone(), circles);
+                Mat resizedImageMat;
+                Mat circles;
+                Bitmap bitmapToDisplay;
+                List<Bitmap> croppedCoinsList;
+
+                if (!Thread.interrupted()) {
+                    resizedImageMat = getResizedMat(image);
+                } else {
+                    return;
+                }
+                if (!Thread.interrupted()) {
+                    circles = findCoinCircles(lowerThreshold, minDist, resizedImageMat.clone());
+                } else {
+                    return;
+                }
+                if (!Thread.interrupted()) {
+                    bitmapToDisplay = getBitmapToDisplay(resizedImageMat.clone(), circles);
+                } else {
+                    return;
+                }
+                if (!Thread.interrupted()) {
+                    croppedCoinsList = getCroppedCoinsList(resizedImageMat.clone(), circles);
+                } else {
+                    return;
+                }
+
                 callback.onComplete(bitmapToDisplay, croppedCoinsList);
             }
         });
@@ -59,7 +81,6 @@ public class ImageProcessor {
     private ArrayList<Bitmap> getCroppedCoinsList(Mat resizedImageMat, Mat circles) {
         ArrayList<Bitmap> croppedCoinsList = new ArrayList<>();
         for (int i = 0; i < circles.cols(); i++) {
-            Log.d(TAG, "Cropping coin numb " + i);
             double[] vCircle = circles.get(0, i);
 
             Point pt = new Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
@@ -124,7 +145,6 @@ public class ImageProcessor {
         /// Apply the Hough Transform to find the circles
         HoughCircles(matOfImage, circles, CV_HOUGH_GRADIENT, 1, minDist, 100, lowerThreshold, 0, 0);
 
-        Log.d(TAG, "Size of circles - " + circles.size());
         return circles;
     }
 
