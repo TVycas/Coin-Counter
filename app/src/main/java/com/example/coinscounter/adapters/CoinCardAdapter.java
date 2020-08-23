@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCardViewHolder> {
-    private static final String TAG = CoinCardAdapter.class.getName();
     private List<CoinCardItem> coinCardList = new ArrayList<>();
     private OnItemClickListener listener;
 
@@ -56,7 +55,7 @@ public class CoinCardAdapter extends RecyclerView.Adapter<CoinCardAdapter.CoinCa
         void onItemClick(int coinCardItemPosition);
     }
 
-    public class CoinCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CoinCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView imageView;
         public TextView textView;
         public OnItemClickListener onCoinListener;

@@ -40,14 +40,11 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         setContentView(R.layout.activity_results);
 
         sumTextView = findViewById(R.id.sumView);
+        progressBar = findViewById(R.id.progress_circular);
+        divider = findViewById(R.id.divider);
 
         viewModel = new ViewModelProvider(this).get(ResultsActivityViewModel.class);
         viewModel.recognizeCoins();
-
-        progressBar = findViewById(R.id.progress_circular);
-        progressBar.setVisibility(View.VISIBLE);
-
-        divider = findViewById(R.id.divider);
 
         viewModel.getCoinResults().observe(this, new Observer<CoinResults>() {
             @Override

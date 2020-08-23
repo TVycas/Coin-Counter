@@ -16,7 +16,7 @@
         android:text="@string/total_value"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progress_circular"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminate="false"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <View
         android:id="@+id/divider"
@@ -39,8 +39,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
         android:scrollbars="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:listitem="@layout/coin_card_item" />
-
 
 </LinearLayout>

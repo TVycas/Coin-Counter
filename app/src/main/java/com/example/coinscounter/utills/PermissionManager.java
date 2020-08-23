@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat;
 public class PermissionManager {
 
     public static Boolean getPermission(@NonNull Activity activity,
-                                        @NonNull String permission, @NonNull String toastText, @NonNull int permissionID) {
-        if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(activity, permission)) {
+                                        @NonNull String permission, @NonNull String toastText, int permissionID) {
+        if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
             Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();

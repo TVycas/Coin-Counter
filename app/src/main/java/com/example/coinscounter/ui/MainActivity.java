@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -26,11 +27,11 @@ import com.example.coinscounter.viewmodel.MainActivityViewModel;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -84,24 +85,17 @@ public class MainActivity extends AppCompatActivity {
     public void loadImage(View view) {
         if (PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
                 "Read external storage permission needed", PERMISSION_TO_READ_STORAGE)) {
-            setUpLoadingImage();
+            dispatchOpenGalleryIntent();
         }
     }
 
-    private void setUpLoadingImage() {
+    private void dispatchOpenGalleryIntent() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, GALLERY_PICK_IMAGE);
     }
 
-    public void openCamera(View view) {
-        if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
-            dispatchTakePictureIntent();
-        }
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_TO_WRITE_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
@@ -114,12 +108,18 @@ public class MainActivity extends AppCompatActivity {
             }
             case PERMISSION_TO_READ_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setUpLoadingImage();
+                    dispatchOpenGalleryIntent();
                 } else {
                     Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
                 }
-                return;
             }
+        }
+    }
+
+    public void openCamera(View view) {
+        if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
+            dispatchTakePictureIntent();
         }
     }
 
@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = createImageFile();
-            photoFileAbsolutePath = photoFile.getAbsolutePath();
             // Continue only if the File was successfully created
             if (photoFile != null) {
+                photoFileAbsolutePath = photoFile.getAbsolutePath();
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
     private File createImageFile() {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = null;
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 photoInputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Picture wasn't found!", Toast.LENGTH_SHORT).show();
                 return;
