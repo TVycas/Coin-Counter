@@ -25,19 +25,18 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class ImageProcessor {
     private static final String TAG = ImageProcessor.class.getName();
-    //TODO capitalize
-    private final int imageWidth;
+    private final int IMAGE_WIDTH;
     // TODO use ExecutorService to shutdown process
-    private final Executor executor;
+    private final Executor EXECUTOR;
 
     @Inject
     public ImageProcessor(int imageWidth, Executor executor) {
-        this.imageWidth = imageWidth;
-        this.executor = executor;
+        this.IMAGE_WIDTH = imageWidth;
+        this.EXECUTOR = executor;
     }
 
     public void processImage(Bitmap image, int lowerThreshold, int minDist, ImageProcessorCallback callback) {
-        executor.execute(new Runnable() {
+        EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
                 Mat resizedImageMat = getResizedMat(image);
@@ -131,7 +130,7 @@ public class ImageProcessor {
         }
 
         //Resize and convert mat to bitmap to display it for the user
-        resizeMat(matToDisplay, imageWidth);
+        resizeMat(matToDisplay, IMAGE_WIDTH);
         Bitmap resultBitmap = Bitmap.createBitmap(matToDisplay.cols(), matToDisplay.rows(), Bitmap.Config.ARGB_8888);
 
         Utils.matToBitmap(matToDisplay, resultBitmap);

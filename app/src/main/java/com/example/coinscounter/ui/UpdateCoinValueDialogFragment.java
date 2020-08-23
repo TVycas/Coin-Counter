@@ -92,7 +92,6 @@ public class UpdateCoinValueDialogFragment extends DialogFragment {
     }
 
     private void updateValueTextView() {
-        // TODO coin text need to be from the resources
         coinValueTextView.setText(coinCardItem.getName());
     }
 

@@ -22,6 +22,7 @@ public class EuroCoinMapper implements CoinMapper {
         put("euro1", 1f);
         put("euro2", 2f);
     }};
+
     private final LinkedList<Float> floatList = new LinkedList<>(Arrays.asList(
             0.01f,
             0.02f,
@@ -32,6 +33,7 @@ public class EuroCoinMapper implements CoinMapper {
             1f,
             2f
     ));
+
     String[] euroNames;
 
     public EuroCoinMapper(Context context) {

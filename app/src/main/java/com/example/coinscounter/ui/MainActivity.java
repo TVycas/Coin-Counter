@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -46,10 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityViewModel viewModel;
     private Button calculateSumBtn;
     private ImageView imgView;
-    private Button incThresh;
-    private Button decThresh;
-    private Button incDist;
-    private Button decDist;
 
     private String photoFileAbsolutePath;
 
@@ -58,26 +55,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calculateSumBtn = findViewById(R.id.calculateSum);
-        imgView = findViewById(R.id.imageView);
-        incThresh = findViewById(R.id.inc_thresh);
-        decThresh = findViewById(R.id.dec_thresh);
-        incDist = findViewById(R.id.inc_dist);
-        decDist = findViewById(R.id.dec_dist);
+        calculateSumBtn = findViewById(R.id.calculate_sum_btn);
+        imgView = findViewById(R.id.image_view);
+        LinearLayout thresholdUpdateBar = findViewById(R.id.thresh_update_bar);
+        LinearLayout distUpdateBar = findViewById(R.id.dist_update_bar);
 
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         viewModel.getImageToDisplay().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
-            imgView.setVisibility(View.VISIBLE);
+
+            thresholdUpdateBar.setVisibility(View.VISIBLE);
+            distUpdateBar.setVisibility(View.VISIBLE);
         });
 
         viewModel.getNumOfSelectedCoins().observe(this, (numOfSelectedCoins) -> {
             if (numOfSelectedCoins > 0) {
-                calculateSumBtn.setVisibility(View.VISIBLE);
+                calculateSumBtn.setEnabled(true);
             } else {
-                calculateSumBtn.setVisibility(View.INVISIBLE);
-                // TODO post message for the user to select coins
+                calculateSumBtn.setEnabled(false);
+                ;
             }
         });
 
