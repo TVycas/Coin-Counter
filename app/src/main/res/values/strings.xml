@@ -2,7 +2,7 @@
     <string name="app_name">Coins Counter</string>
 
     <string name="total_value">Total Value: %1$s</string>
-    <string name="update_coin_help_message">Please use the buttons to set the correct value of the coin.</string>
+    <string name="update_coin_help_message">Please set the correct value for the coin.</string>
 
     <string-array name="euro_values_array">
         <item>1 Cent</item>

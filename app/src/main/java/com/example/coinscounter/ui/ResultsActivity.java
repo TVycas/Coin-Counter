@@ -32,6 +32,7 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
     private CoinCardAdapter adapter;
     private List<CoinCardItem> coinCardItems;
     private ProgressBar progressBar;
+    private View divider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
 
         progressBar = findViewById(R.id.progress_circular);
         progressBar.setVisibility(View.VISIBLE);
+
+        divider = findViewById(R.id.divider);
 
         viewModel.getCoinResults().observe(this, new Observer<CoinResults>() {
             @Override
@@ -65,6 +68,7 @@ public class ResultsActivity extends AppCompatActivity implements UpdateCoinValu
         sumTextView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
         sumTextView.setVisibility(View.VISIBLE);
+        divider.setVisibility(View.VISIBLE);
     }
 
     private void setUpRecyclerView() {

@@ -48,6 +48,7 @@ public class Repository {
     }
 
     public void processCoinImage(Bitmap image, int lowerThreshold, int minDist) {
+        imageProcessor.cancelExecution();
         imageProcessor.processImage(image, lowerThreshold, minDist, new ImageProcessor.ImageProcessorCallback() {
             @Override
             public void onComplete(Bitmap processedImage, List<Bitmap> croppedCoins) {

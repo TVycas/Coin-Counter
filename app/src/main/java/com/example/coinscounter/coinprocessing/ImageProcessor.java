@@ -13,7 +13,8 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -26,17 +27,24 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 public class ImageProcessor {
     private static final String TAG = ImageProcessor.class.getName();
     private final int IMAGE_WIDTH;
-    // TODO use ExecutorService to shutdown process
-    private final Executor EXECUTOR;
+    private final ExecutorService EXECUTOR_SERVICE;
+    private Future<?> future;
 
     @Inject
-    public ImageProcessor(int imageWidth, Executor executor) {
+    public ImageProcessor(int imageWidth, ExecutorService executor) {
         this.IMAGE_WIDTH = imageWidth;
-        this.EXECUTOR = executor;
+        this.EXECUTOR_SERVICE = executor;
+    }
+
+    public void cancelExecution() {
+        if (future != null && !future.isCancelled()) {
+            boolean cancelled = future.cancel(true);
+            Log.i(TAG, "cancelExecution: previous process canceled: " + cancelled);
+        }
     }
 
     public void processImage(Bitmap image, int lowerThreshold, int minDist, ImageProcessorCallback callback) {
-        EXECUTOR.execute(new Runnable() {
+        future = EXECUTOR_SERVICE.submit(new Runnable() {
             @Override
             public void run() {
                 Mat resizedImageMat = getResizedMat(image);
@@ -76,11 +84,6 @@ public class ImageProcessor {
             Rect coinRect = new Rect(x, y, radius * 2, radius * 2);
             Mat croppedMat = new Mat(matToSave, coinRect);
 
-//            Log.d(TAG, "Channels: " + croppedMat.channels());
-//            Log.d(TAG, "Type: " + croppedMat.type());
-
-//            cvtColor(croppedMat, croppedMat, COLOR_BGRA2RGBA);
-
             //Convert the Mat to Bitmap
             Bitmap croppedCoin = Bitmap.createBitmap(croppedMat.cols(), croppedMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(croppedMat, croppedCoin);
@@ -92,31 +95,6 @@ public class ImageProcessor {
         Log.d(TAG, "Total cropped coins: " + croppedCoinsList.size());
         return croppedCoinsList;
     }
-
-//    public void saveCoins(List<Bitmap> croppedCoinsList) throws IOException {
-//        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() +
-//                "/CoinsCounter/SavedCoins";
-//
-//        Log.d(TAG, file_path);
-//        File dir = new File(file_path);
-//
-//        if (!dir.exists())
-//            dir.mkdirs();
-//
-//        FileOutputStream fOut = null;
-//
-//        for (Bitmap croppedCoin : croppedCoinsList) {
-//            //Save the cropped coin bitmap to disk
-//            File file = new File(dir, "CroppedCoin_" + System.currentTimeMillis() + ".png");
-//            fOut = new FileOutputStream(file);
-//            croppedCoin.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-//        }
-//
-//        if (fOut != null)
-//            fOut.flush();
-//
-//        fOut.close();
-//    }
 
     private Bitmap getBitmapToDisplay(Mat matToDisplay, Mat circles) {
         //Draw red circles round the found coins
@@ -148,8 +126,6 @@ public class ImageProcessor {
 
         Log.d(TAG, "Size of circles - " + circles.size());
         return circles;
-//        Log.d(TAG, "Hough");
-//        Log.d(TAG, "Mat: " + matOfImage.rows() + " " + matOfImage.cols());
     }
 
     private Mat getResizedMat(Bitmap image) {

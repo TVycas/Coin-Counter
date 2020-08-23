@@ -30,6 +30,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:background="@android:color/darker_gray" />
 
     <androidx.recyclerview.widget.RecyclerView

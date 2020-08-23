@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 calculateSumBtn.setEnabled(true);
             } else {
                 calculateSumBtn.setEnabled(false);
-                ;
             }
         });
 

@@ -45,7 +45,7 @@ public class CoinRecognitionModel {
                                 float confidence = labels.get(0).getConfidence();
                                 int index = labels.get(0).getIndex();
 
-                                Log.d(TAG, "onSuccess: text: " + predictedClass + "; confidence: " + confidence + "; index: " + index);
+                                Log.v(TAG, "onSuccess: text: " + predictedClass + "; confidence: " + confidence + "; index: " + index);
                                 CoinCardItem coinCardItem = new CoinCardItem(coinBitmap, predictedClass, coinMapper);
 
                                 callback.onPrediction(coinCardItem);
@@ -57,7 +57,7 @@ public class CoinRecognitionModel {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "onFailure: Failed to classify image");
+                            Log.d(TAG, "onFailure: Failed to classify coin");
                             callback.onPrediction(null);
                         }
                     });
