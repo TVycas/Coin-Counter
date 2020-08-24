@@ -5,14 +5,14 @@ TensorFlow Lite image recognition model.
 
 The app works by first capturing an image of coins (all placed to show
 the reverse (or the "tails") of the coin). Then, the app displays an image
-of found coins for the user to select or deselect detected as coins.
+of found coins for the user to select or deselect coins.
 Once the users are happy with the selection, they can initiate the coin
 recognition, see the calculated sum of values and update the wrongly
 recognized coins to their correct values.
 
 The app uses intents to allow the user to either capture an image of the
 coins or select one from the gallery. Then, it uses OpenCV and it's
-Hough Circles method to find circles in the image (which hopefully
+Hough Circles transformation method to find circles in the image (which hopefully
 correspond to coins). Later, these circles are used in a TensorFlow Lite
 model, generated using Firebase, to predict the values of each of the
 coins.
