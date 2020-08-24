@@ -63,8 +63,9 @@ public class ImageProcessor {
             public void run() {
                 Mat resizedImageMat;
                 Mat circles;
-                Bitmap bitmapToDisplay;
-                List<Bitmap> croppedCoinsList;
+                // In case OpenCV crashes, the method still returns
+                Bitmap bitmapToDisplay = image;
+                List<Bitmap> croppedCoinsList = new ArrayList<>();
 
                 if (!Thread.interrupted()) {
                     resizedImageMat = getResizedMat(image);
@@ -86,7 +87,6 @@ public class ImageProcessor {
                 } else {
                     return;
                 }
-
                 callback.onComplete(bitmapToDisplay, croppedCoinsList);
             }
         });

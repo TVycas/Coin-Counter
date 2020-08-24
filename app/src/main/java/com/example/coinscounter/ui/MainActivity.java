@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.getImageToDisplay().observe(this, (processedBitmap) -> {
             imgView.setImageBitmap(processedBitmap);
-            setParamBtnsVisibility(true);
+            setParamBtnsVisibility();
         });
 
         // Enable calculation button if there's at least one coin selected
@@ -83,22 +83,15 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
     }
 
-    // TODO goes sometimes goes invisible when it shouldn't
-    private void setParamBtnsVisibility(boolean visible) {
-        if (visible) {
-            thresholdUpdateBar.setVisibility(View.VISIBLE);
-            distUpdateBar.setVisibility(View.VISIBLE);
-        } else {
-            thresholdUpdateBar.setVisibility(View.INVISIBLE);
-            distUpdateBar.setVisibility(View.INVISIBLE);
-        }
+    private void setParamBtnsVisibility() {
+        thresholdUpdateBar.setVisibility(View.VISIBLE);
+        distUpdateBar.setVisibility(View.VISIBLE);
     }
 
     public void loadImage(View view) {
         // If we have the permission, dispatch intent
         if (PermissionManager.getPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE,
                 "Read external storage permission needed", PERMISSION_TO_READ_STORAGE)) {
-            setParamBtnsVisibility(false);
             dispatchOpenGalleryIntent();
         }
     }
@@ -108,33 +101,10 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(gallery, GALLERY_PICK_IMAGE);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_TO_WRITE_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    dispatchTakePictureIntent();
-                } else {
-                    Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-            case PERMISSION_TO_READ_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    dispatchOpenGalleryIntent();
-                } else {
-                    Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
     public void openCamera(View view) {
         // If we have the permission, dispatch intent
         if (PermissionManager.getPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 "Camera permission needed", PERMISSION_TO_WRITE_STORAGE)) {
-            setParamBtnsVisibility(false);
             dispatchTakePictureIntent();
         }
     }
@@ -183,6 +153,28 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return image;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_TO_WRITE_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchTakePictureIntent();
+                } else {
+                    Toast.makeText(this, "Write permission not granted", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case PERMISSION_TO_READ_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchOpenGalleryIntent();
+                } else {
+                    Toast.makeText(this, "Read permission not granted", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     @Override

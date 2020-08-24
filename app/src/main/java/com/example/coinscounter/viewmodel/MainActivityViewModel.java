@@ -22,14 +22,15 @@ public class MainActivityViewModel extends ViewModel {
     private Repository repository;
 
     private Bitmap imageOfCoins = null;
-    private int lowerThreshold = 50;
-    private int minDistance = 50;
+    private int lowerThreshold;
+    private int minDistance;
 
     @ViewModelInject
     public MainActivityViewModel(Repository repository) {
         this.repository = repository;
         imageToDisplay = repository.getImageToDisplay();
         numOfSelectedCoins = repository.getNumOfSelectedCoins();
+        resetParams();
     }
 
     public LiveData<Bitmap> getImageToDisplay() {
@@ -43,13 +44,20 @@ public class MainActivityViewModel extends ViewModel {
     public void setImageOfCoins(InputStream photoInputStream) {
         Log.i(TAG, "processCoinImage: loading image from stream...");
         this.imageOfCoins = BitmapFactory.decodeStream(photoInputStream);
+        resetParams();
         processCoinImage();
     }
 
     public void setImageOfCoins(String photoPath) {
         Log.i(TAG, "processCoinImage: loading image from path...");
         this.imageOfCoins = BitmapFactory.decodeFile(photoPath);
+        resetParams();
         processCoinImage();
+    }
+
+    private void resetParams() {
+        lowerThreshold = 50;
+        minDistance = 50;
     }
 
     private void processCoinImage() {
@@ -76,11 +84,5 @@ public class MainActivityViewModel extends ViewModel {
     public void incDistance() {
         minDistance += 5;
         processCoinImage();
-    }
-
-    @Override
-    protected void onCleared() {
-        Log.d(TAG, "onCleared: Called");
-        super.onCleared();
     }
 }
