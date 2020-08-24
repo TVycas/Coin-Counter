@@ -20,6 +20,7 @@ public class MainActivityViewModel extends ViewModel {
     private LiveData<Bitmap> imageToDisplay;
     private LiveData<Integer> numOfSelectedCoins;
     private Repository repository;
+
     private Bitmap imageOfCoins = null;
     private int lowerThreshold = 50;
     private int minDistance = 50;
@@ -75,5 +76,11 @@ public class MainActivityViewModel extends ViewModel {
     public void incDistance() {
         minDistance += 5;
         processCoinImage();
+    }
+
+    @Override
+    protected void onCleared() {
+        Log.d(TAG, "onCleared: Called");
+        super.onCleared();
     }
 }

@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         OpenCVLoader.initDebug();
     }
 
+    // TODO goes sometimes goes invisible when it shouldn't
     private void setParamBtnsVisibility(boolean visible) {
         if (visible) {
             thresholdUpdateBar.setVisibility(View.VISIBLE);
