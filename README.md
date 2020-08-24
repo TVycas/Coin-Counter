@@ -4,7 +4,7 @@ An Android app to calculate the value of coins in an image using a
 TensorFlow Lite image recognition model.
 
 The app works by first capturing an image of coins (all placed to show
-the reverse or the tails of the coin). Then, the app displays an image
+the reverse (or the "tails") of the coin). Then, the app displays an image
 of found coins for the user to select or deselect detected as coins.
 Once the users are happy with the selection, they can initiate the coin
 recognition, see the calculated sum of values and update the wrongly
