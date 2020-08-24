@@ -32,9 +32,9 @@ coins.
 ### Screenshots
 
   <p align="left">
-    <img src="../assets/coin_selection.png" alt="Coin selection" width="200" style="padding-left: 10px"/>
-    <img src="../assets/coin_selection_2.png" alt="Coin selection" width="200" style="padding-left: 10px"/>
-    <img src="../assets/results1.png" alt="Results" width="200" style="padding-left: 10px"/>
-    <img src="../assets/change_value1.png" alt="Update coin value" width="200" style="padding-left: 10px"/>
-    <img src="../assets/change_value2.png" alt="Update coin value" width="200" style="padding-left: 10px"/>
+    <img src="../assets/coin_selection.jpg" width="200" style="padding-left: 10px"/>
+    <img src="../assets/coin_selection_2.jpg" width="200" style="padding-left: 10px"/>
+    <img src="../assets/results1.jpg" width="200" style="padding-left: 10px"/>
+    <img src="../assets/change_value1.jpg" width="200" style="padding-left: 10px"/>
+    <img src="../assets/change_value2.jpg" width="200" style="padding-left: 10px"/>
   </p>
