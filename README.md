@@ -31,8 +31,10 @@ coins.
 
 ### Screenshots
 
-<!--  <p align="left">-->
-<!--    <img src="../screenshots/basic.png" alt="search" width="200" style="padding-left: 10px"/>-->
-<!--    <img src="../screenshots/search.png" alt="search" width="200" style="padding-left: 10px"/>-->
-<!--    <img src="../screenshots/cart.png" alt="search" width="200" style="padding-left: 10px"/>-->
-<!--  </p>-->
+  <p align="left">
+    <img src="../assets/coin_selection.png" alt="Coin selection" width="200" style="padding-left: 10px"/>
+    <img src="../assets/coin_selection_2.png" alt="Coin selection" width="200" style="padding-left: 10px"/>
+    <img src="../assets/results1.png" alt="Results" width="200" style="padding-left: 10px"/>
+    <img src="../assets/change_value1.png" alt="Update coin value" width="200" style="padding-left: 10px"/>
+    <img src="../assets/change_value2.png" alt="Update coin value" width="200" style="padding-left: 10px"/>
+  </p>
